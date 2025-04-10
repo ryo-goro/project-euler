@@ -71,16 +71,14 @@ long diagonal_max(void)
 {
     long res = 0L;
 
-    for (int i = 0; i < LEN; i++) {
-        for (int j = 0; j < LEN; j++) {
-            if (i <= LEN - NUM && j <= LEN - NUM) {
-                long p = 1L;
-                for (int k = 0; k < NUM; k++) {
-                    p *= grid[i + k][j + k];
-                }
-                if (p > res) {
-                    res = p;
-                }
+    for (int i = 0; i <= LEN - NUM; i++) {
+        for (int j = 0; j <= LEN - NUM; j++) {
+            long p = 1L;
+            for (int k = 0; k < NUM; k++) {
+                p *= grid[i + k][j + k];
+            }
+            if (p > res) {
+                res = p;
             }
         }
     }
@@ -93,16 +91,14 @@ long rev_diagonal_max(void)
 {
     long res = 0L;
 
-    for (int i = 0; i < LEN; i++) {
-        for (int j = 0; j < LEN; j++) {
-            if (i >= NUM - 1 && j <= LEN - NUM) {
-                long p = 1L;
-                for (int k = 0; k < NUM; k++) {
-                    p *= grid[i - k][j + k];
-                }
-                if (p > res) {
-                    res = p;
-                }
+    for (int i = NUM - 1; i < LEN; i++) {
+        for (int j = 0; j <= LEN - NUM; j++) {
+            long p = 1L;
+            for (int k = 0; k < NUM; k++) {
+                p *= grid[i - k][j + k];
+            }
+            if (p > res) {
+                res = p;
             }
         }
     }

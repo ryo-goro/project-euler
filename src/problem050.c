@@ -50,7 +50,7 @@ int main(void)
     long base_sum = 0;
 
     for (long from = 1, to = 1; to <= num_of_primes; from++, to++) {
-        base_sum += primes[to] - primes[from - 1];
+        base_sum += primes[to] - primes[from - 1];  // base_sum = primes[from] + primes[from + 1] + ... + primes[to]
         if (base_sum >= LIMIT) {
             break;
         }

@@ -1,5 +1,4 @@
 // Magic 5-gon Ring
-// 6531031914842725
 
 #include <stdio.h>
 
@@ -44,72 +43,72 @@ int next_permutation(int *a, int n)
 
 int main(void)
 {
-    int outer[N];
+    // 10 must be one of the outer nodes as the result should be a 16-digit number
+    // We can assume outer[0] = 10 due to the symmetry
+    int outer[N] = {10};
     int inner[N];
 
-    int perm[2 * N - 1];
+    int one_digit_nodes[2 * N - 1];
     for (int i = 0; i < 2 * N - 1; i++) {
-        perm[i] = i + 1;
+        one_digit_nodes[i] = i + 1;
     }
 
-    int digits[3 * N];
     unsigned long long res = 0;
 
-    for (int idx10 = 0; idx10 < N; idx10++) {
-        outer[idx10] = 10;
-        do {
-            for (int i = 0, j = 0; i < N; i++) {
-                if (i == idx10) {
-                    continue;
-                }
-                outer[i] = perm[j++];
+    do {
+        for (int i = 0; i < N - 1; i++) {
+            outer[i + 1] = one_digit_nodes[i];
+        }
+        for (int i = 0; i < N; i++) {
+            inner[i] = one_digit_nodes[i + N - 1];
+        }
+
+        int magical = 1;
+
+        for (int i = 0; i < N - 2; i++) {
+            if (outer[i] + inner[i] != outer[i + 1] + inner[i + 2]) {
+                magical = 0;
+                break;
             }
-            for (int i = 0; i < N; i++) {
-                inner[i] = perm[i + N - 1];
+        }
+
+        if (!magical || outer[N - 2] + inner[N - 2] != outer[N - 1] + inner[0]) {
+            continue;
+        }
+
+        // Determines which node to start the concatenation from
+        int idx = 1;
+        for (int i = 2; i < N; i++) {
+            if (outer[i] < outer[idx]) {
+                idx = i;
+            }
+        }
+
+        unsigned long long candidate = 0;
+
+        for (int i = 0; i < N; i++) {
+            if (outer[idx] == 10) {
+                candidate *= 100;
+            } else {
+                candidate *= 10;
+            }
+            candidate += outer[idx];
+
+            candidate *= 10;
+            candidate += inner[idx];
+
+            if (++idx == N) {
+                idx = 0;
             }
 
-            if (
-                   outer[0] + inner[0] == outer[1] + inner[2]
-                && outer[1] + inner[1] == outer[2] + inner[3]
-                && outer[2] + inner[2] == outer[3] + inner[4]
-                && outer[3] + inner[3] == outer[4] + inner[0]
-            ) {
-                int idx = 0;
-                int min_node = outer[0];
-                for (int i = 1; i < N; i++) {
-                    if (outer[i] < min_node) {
-                        idx = i;
-                        min_node = outer[i];
-                    }
-                }
+            candidate *= 10;
+            candidate += inner[idx];
+        }
 
-                for (int i = 0, j = 0; i < N; i++) {
-                    digits[j++] = outer[idx];
-                    digits[j++] = inner[idx];
-
-                    if (++idx == N) {
-                        idx = 0;
-                    }
-                    digits[j++] = inner[idx];
-                }
-
-                unsigned long long candidate = 0;
-
-                for (int i = 0; i < 3 * N; i++) {
-                    if (digits[i] == 10) {
-                        candidate *= 100;
-                    } else {
-                        candidate *= 10;
-                    }
-                    candidate += digits[i];
-                }
-
-                if (candidate > res) {
-                    res = candidate;
-                }
-            }
-        } while (next_permutation(perm, 2 * N - 1));
-    }
+        if (candidate > res) {
+            res = candidate;
+        }
+    } while (next_permutation(one_digit_nodes, 2 * N - 1));
 
     printf("%llu\n", res);
 

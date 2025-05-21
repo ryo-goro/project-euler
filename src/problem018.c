@@ -43,7 +43,7 @@ int main(void)
     }
 
     int res = s[HEIGHT - 1][0];
-    for (int i = 1; i <= HEIGHT; i++) {
+    for (int i = 1; i < HEIGHT; i++) {
         res = max(res, s[HEIGHT - 1][i]);
     }
 

@@ -1,5 +1,4 @@
 // Digit Factorial Chains
-// Solved. Needs refactoring a bit
 
 #include <stdio.h>
 

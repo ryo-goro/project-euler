@@ -2,47 +2,41 @@
 
 #include <stdio.h>
 
+#define swap(type, x, y)    do { type t = x; x = y; y = t; } while (0)
+
+void reverse(char *a, int l, int r)
+{
+    for (int i = 0, h = (r - l) / 2; i < h; i++) {
+        swap(char, a[l + i], a[r - 1 - i]);
+    }
+}
+
 int next_combination(char *comb, int n)
 {
     int cursor = n - 1;
 
-    while (cursor >= 0 && !comb[cursor]) {
+    while (cursor >= 0 && comb[cursor]) {
         cursor--;
     }
 
-    // comb = {0, 0, ..., 0}
+    // comb = {1, 1, ..., 1}
     if (cursor < 0) {
         return 0;
     }
 
-    if (cursor < n - 1) {
-        comb[cursor] = 0;
-        comb[cursor + 1] = 1;
-        return 1;
-    }
-
     do {
-        comb[cursor--] = 0;
-    } while (cursor >= 0 && comb[cursor]);
-
-    int count = n - 1 - cursor;
-
-    while (cursor >= 0 && !comb[cursor]) {
         cursor--;
-    }
+    } while (cursor >= 0 && !comb[cursor]);
 
     // comb = {0, ..., 0, 1, ..., 1}
     if (cursor < 0) {
-        for (int i = 0; i < count; i++) {
-            comb[i] = 1;
-        }
+        reverse(comb, 0, n);
         return 0;
     }
 
     comb[cursor] = 0;
-    for (int i = 0; i <= count; i++) {
-        comb[cursor + 1 + i] = 1;
-    }
+    comb[cursor + 1] = 1;
+    reverse(comb, cursor + 2, n);
 
     return 1;
 }

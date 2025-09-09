@@ -1,4 +1,5 @@
 // Even Fibonacci Numbers
+// 4613732
 
 #include <stdio.h>
 
@@ -8,14 +9,15 @@ int main(void)
 {
     long prev = 1L;
     long curr = 2L;
-    long tmp;
 
     long sum = 0L;
 
     while (curr <= LIMIT) {
-        if (curr % 2L == 0L)
+        if (curr % 2L == 0L) {
             sum += curr;
-        tmp = curr;
+        }
+
+        long tmp = curr;
         curr += prev;
         prev = tmp;
     }

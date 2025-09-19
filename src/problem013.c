@@ -1,11 +1,13 @@
 // Large Sum
+// 5537376230
 
 #include <stdio.h>
 
-#define NUMBER 100
-#define DIGITS 50
+#define NUM_OF_NUMBERS 100
+#define NUM_OF_DIGITS 50
+#define NUM_OF_DIGITS_TO_SHOW 10
 
-const int nums_arr[NUMBER][DIGITS] = {
+const int nums[NUM_OF_NUMBERS][NUM_OF_DIGITS] = {
     {3, 7, 1, 0, 7, 2, 8, 7, 5, 3, 3, 9, 0, 2, 1, 0, 2, 7, 9, 8, 7, 9, 7, 9, 9, 8, 2, 2, 0, 8, 3, 7, 5, 9, 0, 2, 4, 6, 5, 1, 0, 1, 3, 5, 7, 4, 0, 2, 5, 0},
     {4, 6, 3, 7, 6, 9, 3, 7, 6, 7, 7, 4, 9, 0, 0, 0, 9, 7, 1, 2, 6, 4, 8, 1, 2, 4, 8, 9, 6, 9, 7, 0, 0, 7, 8, 0, 5, 0, 4, 1, 7, 0, 1, 8, 2, 6, 0, 5, 3, 8},
     {7, 4, 3, 2, 4, 9, 8, 6, 1, 9, 9, 5, 2, 4, 7, 4, 1, 0, 5, 9, 4, 7, 4, 2, 3, 3, 3, 0, 9, 5, 1, 3, 0, 5, 8, 1, 2, 3, 7, 2, 6, 6, 1, 7, 3, 0, 9, 6, 2, 9},
@@ -108,51 +110,65 @@ const int nums_arr[NUMBER][DIGITS] = {
     {5, 3, 5, 0, 3, 5, 3, 4, 2, 2, 6, 4, 7, 2, 5, 2, 4, 2, 5, 0, 8, 7, 4, 0, 5, 4, 0, 7, 5, 5, 9, 1, 7, 8, 9, 7, 8, 1, 2, 6, 4, 3, 3, 0, 3, 3, 1, 6, 9, 0},
 };
 
-void reverse(int *a, int n)
+void reverse_arr(int *arr, int n)
 {
     for (int i = 0, h = n / 2; i < h; i++) {
-        int tmp = a[i];
-        a[i] = a[n - 1 - i];
-        a[n - 1 - i] = tmp;
+        int tmp = arr[i];
+        arr[i] = arr[n - 1 - i];
+        arr[n - 1 - i] = tmp;
     }
 }
 
-int carry(int *a, int n)
+void add_arr(int *dst, const int *src, int n)
 {
-    for (int i = 1; i < n; i++) {
-        a[i] += a[i - 1] / 10;
-        a[i - 1] %= 10;
+    for (int i = 0; i < n; i++) {
+        dst[i] += src[i];
+    }
+}
+
+int carry_digits(int *digits, int len)
+{
+    if (len <= 0) {
+        return 0;
     }
 
-    int head = n - 1;
+    for (int i = 0; i < len - 1; i++) {
+        digits[i + 1] += digits[i] / 10;
+        digits[i] %= 10;
+    }
 
-    while (a[head] >= 10) {
-        a[head + 1] = a[head] / 10;
-        a[head] %= 10;
+    int head = len - 1;
+
+    while (digits[head] >= 10) {
+        digits[head + 1] = digits[head] / 10;
+        digits[head] %= 10;
         head++;
     }
 
     return head + 1;
 }
 
-int main(void)
+void println_arr(const int *arr, int n)
 {
-    int res[64] = {0};
-
-    for (int i = 0; i < NUMBER; i++) {
-        for (int j = 0; j < DIGITS; j++) {
-            res[j] += nums_arr[i][j];
-        }
-    }
-
-    reverse(res, DIGITS);
-    int len = carry(res, DIGITS);
-    reverse(res, len);
-
-    for (int i = 0; i < 10; i++) {
-        printf("%d", res[i]);
+    for (int i = 0; i < n; i++) {
+        printf("%d", arr[i]);
     }
     putchar('\n');
+}
+
+int main(void)
+{
+    int sum[256] = {0};
+
+    for (int i = 0; i < NUM_OF_NUMBERS; i++) {
+        add_arr(sum, nums[i], NUM_OF_DIGITS);
+    }
+
+    reverse_arr(sum, NUM_OF_DIGITS);
+    int len = carry_digits(sum, NUM_OF_DIGITS);
+    reverse_arr(sum, len);
+
+    println_arr(sum, NUM_OF_DIGITS_TO_SHOW);
 
     return 0;
 }

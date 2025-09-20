@@ -1,52 +1,49 @@
 // Longest Collatz Sequence
+// 837799
 
 #include <stdio.h>
 
 #define LIMIT 1000000L  // 1 million
-#define SEQUENCE_LEN 1000
+#define CACHE_LEN LIMIT
+#define BUF_LEN 1000
+
+int collatz_length(long long n)
+{
+    static int cache[CACHE_LEN] = {0, 1};
+
+    long long buf[BUF_LEN];
+    int idx = 0;
+
+    while (n >= CACHE_LEN || cache[n] == 0) {
+        buf[idx++] = n;
+
+        if (n % 2 == 0LL) {
+            n /= 2;
+        } else {
+            n = n * 3 + 1;
+        }
+    }
+
+    int len = cache[n];
+
+    while (idx > 0) {
+        len++;
+        idx--;
+        if (buf[idx] < CACHE_LEN) {
+            cache[buf[idx]] = len;
+        }
+    }
+
+    return len;
+}
 
 int main(void)
 {
-    int lens[LIMIT] = {0};
+    long res = 1;
+    int max_len = 1;
 
-    long res = 1L;
-    int max_len = 0;
-
-    for (; res < LIMIT; res *= 2L) {
-        lens[res] = ++max_len;
-    }
-
-    res /= 2L;
-
-    long long sequence[SEQUENCE_LEN];
-
-    for (long n = 2L; n < LIMIT; n++) {
-        if (lens[n] > 0) {
-            continue;
-        }
-
-        int idx = 0;
-        long long collatz = (long long)n;
-
-        do {
-            sequence[idx++] = collatz;
-
-            if (collatz % 2LL == 0LL) {
-                collatz /= 2LL;
-            } else {
-                collatz = collatz * 3LL + 1LL;
-            }
-
-        } while (collatz >= LIMIT || lens[collatz] == 0);
-
-        int len = lens[collatz];
-        while (idx > 0) {
-            len++;
-            idx--;
-            if (sequence[idx] < LIMIT) {
-                lens[sequence[idx]] = len;
-            }
-        }
+    for (long n = 2; n < LIMIT; n++) {
+        int len = collatz_length(n);
 
         if (len > max_len) {
             res = n;

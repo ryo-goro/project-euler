@@ -1,4 +1,5 @@
 // Lattice Paths
+// 137846528820
 
 #include <stdio.h>
 
@@ -6,10 +7,8 @@
 
 int gcd(int a, int b)
 {
-    int r;
-
     while (b > 0) {
-        r = a % b;
+        int r = a % b;
         a = b;
         b = r;
     }
@@ -19,7 +18,7 @@ int gcd(int a, int b)
 
 int main(void)
 {
-    // The problem is to calculate 20! / (10!)^2 = (20 * 19 * ... * 11) / (10 * 9 * ... * 1)
+    // The problem is to calculate 40! / (20!)^2 = (40 * 39 * ... * 21) / (20 * 19 * ... * 1)
 
     int numerators[N];
     for (int i = 0; i < N; i++) {
@@ -31,15 +30,17 @@ int main(void)
 
         for (int j = 0; j < N; j++) {
             int g = gcd(denominator, numerators[j]);
+
             denominator /= g;
             numerators[j] /= g;
+
             if (denominator == 1) {
                 break;
             }
         }
     }
 
-    long long res = 1LL;
+    long long res = 1;
     for (int i = 0; i < N; i++) {
         res *= numerators[i];
     }

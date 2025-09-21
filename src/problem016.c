@@ -1,43 +1,64 @@
 // Power Digit Sum
+// 1366
 
 #include <stdio.h>
 
 #define N 1000
 
-int carry(int *digits, int len)
+int carry_digits(int *digits, int len)
 {
-    for (int i = 0; i < len; i++) {
+    if (len <= 0) {
+        return 0;
+    }
+
+    for (int i = 0; i < len - 1; i++) {
         digits[i + 1] += digits[i] / 10;
         digits[i] %= 10;
     }
 
-    while (digits[len] > 0) {
-        digits[len + 1] += digits[len] / 10;
-        digits[len] %= 10;
-        len++;
+    int head = len - 1;
+
+    while (digits[head] >= 10) {
+        digits[head + 1] = digits[head] / 10;
+        digits[head] %= 10;
+        head++;
     }
 
-    return len;
+    return head + 1;
+}
+
+int sumof(const int *arr, int n)
+{
+    int res = 0;
+    
+    for (int i = 0; i < n; i++) {
+        res += arr[i];
+    }
+
+    return res;
+}
+
+void multiply_arr(int *arr, int n, int multiplier)
+{
+    for (int i = 0; i < n; i++) {
+        arr[i] *= multiplier;
+    }
 }
 
 int main(void)
 {
-    int digits[N / 2] = {1};
+    // `digits` should hold all the digits of 2^1000
+    // In other words, its length should be > log_10(2^1000) ~ 301
+    // So N = 1000 is big enough
+    int digits[N] = {1};
     int len = 1;
 
     for (int i = 0; i < N; i++) {
-        for (int j = 0; j < len; j++) {
-            digits[j] *= 2;
-        }
-        len = carry(digits, len);
+        multiply_arr(digits, len, 2);
+        len = carry_digits(digits, len);
     }
 
-    int sum = 0;
-    for (int i = 0; i < len; i++) {
-        sum += digits[i];
-    }
-
-    printf("%d\n", sum);
+    printf("%d\n", sumof(digits, len));
 
     return 0;
 }

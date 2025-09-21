@@ -35,12 +35,12 @@ int carry(int *digits, int num_of_digits)
     return num_of_digits;
 }
 
-int sumof(int *a, int n)
+int sumof(const int *arr, int n)
 {
     int res = 0;
 
     for (int i = 0; i < n; i++) {
-        res += a[i];
+        res += arr[i];
     }
 
     return res;

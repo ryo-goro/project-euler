@@ -1,4 +1,5 @@
 // Number Letter Counts
+// 21124
 
 #include <stdio.h>
 
@@ -6,12 +7,12 @@ const int one_digit[] = {3, 3, 5, 4, 4, 3, 5, 5, 4};        // From one to nine
 const int teen[]      = {3, 6, 6, 8, 8, 7, 7, 9, 8, 8};     // From ten to nineteen
 const int ty[]        = {6, 6, 5, 5, 5, 7, 6, 6};           // From twenty to ninety
 
-int sumof(const int *a, int n)
+int sumof(const int *arr, int n)
 {
     int res = 0;
 
     for (int i = 0; i < n; i++) {
-        res += a[i];
+        res += arr[i];
     }
 
     return res;

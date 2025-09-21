@@ -1,4 +1,5 @@
 // Maximum Path Sum I
+// 1074
 
 #include <stdio.h>
 
@@ -27,6 +28,19 @@ int max(int a, int b)
     return a > b ? a : b;
 }
 
+int maxof(const int *arr, int n)
+{
+    int res = arr[0];
+
+    for (int i = 1; i < n; i++) {
+        if (arr[i] > res) {
+            res = arr[i];
+        }
+    }
+
+    return res;
+}
+
 int main(void)
 {
     int *s[HEIGHT];
@@ -42,12 +56,7 @@ int main(void)
         }
     }
 
-    int res = s[HEIGHT - 1][0];
-    for (int i = 1; i < HEIGHT; i++) {
-        res = max(res, s[HEIGHT - 1][i]);
-    }
-
-    printf("%d\n", res);
+    printf("%d\n", maxof(s[HEIGHT - 1], HEIGHT));
 
     return 0;
 }

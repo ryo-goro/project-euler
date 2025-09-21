@@ -1,24 +1,49 @@
 // Factorial Digit Sum
+// 648
 
 #include <stdio.h>
 
 #define N 100
 #define LEN 1024
 
-int carry(int *digits, int len)
+int sumof(const int *arr, int n)
 {
-    for (int i = 0; i < len; i++) {
+    int res = 0;
+
+    for (int i = 0; i < n; i++) {
+        res += arr[i];
+    }
+
+    return res;
+}
+
+void multiply_arr(int *arr, int n, int multiplier)
+{
+    for (int i = 0; i < n; i++) {
+        arr[i] *= multiplier;
+    }
+}
+
+int carry_digits(int *digits, int len)
+{
+    if (len <= 0) {
+        return 0;
+    }
+
+    for (int i = 0; i < len - 1; i++) {
         digits[i + 1] += digits[i] / 10;
         digits[i] %= 10;
     }
 
-    while (digits[len] > 0) {
-        digits[len + 1] += digits[len] / 10;
-        digits[len] %= 10;
-        len++;
+    int head = len - 1;
+
+    while (digits[head] >= 10) {
+        digits[head + 1] = digits[head] / 10;
+        digits[head] %= 10;
+        head++;
     }
 
-    return len;
+    return head + 1;
 }
 
 int main(void)
@@ -27,18 +52,11 @@ int main(void)
     int len = 1;
 
     for (int i = 2; i <= N; i++) {
-        for (int j = 0; j < len; j++) {
-            digits[j] *= i;
-        }
-        len = carry(digits, len);
+        multiply_arr(digits, len, i);
+        len = carry_digits(digits, len);
     }
 
-    int sum = 0;
-    for (int i = 0; i < len; i++) {
-        sum += digits[i];
-    }
-
-    printf("%d\n", sum);
+    printf("%d\n", sumof(digits, len));
 
     return 0;
 }

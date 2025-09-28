@@ -1,19 +1,18 @@
 // Non-Abundant Sums
+// 4179871
 
 #include <stdio.h>
 #include <stdlib.h>
 
-#define LIMIT 28123
+#define LIMIT 28123 // All integers greater than this limit can be written as the sum of two abundant numbers
 
+// n should be > 1
 long sum_of_proper_divisors(long n)
 {
-    if (n <= 1L) {
-        return 0L;
-    }
-
-    long sum = 1L;
+    long sum = 1;
     long d;
-    for (d = 2L; d * d < n; d++) {
+
+    for (d = 2; d * d < n; d++) {
         if (n % d == 0L) {
             sum += d + n / d;
         }
@@ -33,20 +32,16 @@ int is_abundant(long n)
 
 int main(void)
 {
-    int abundant[LIMIT];
-    int count = 0;
+    int abundant[LIMIT] = {0};
+    int num_of_abundant_nums = 0;
 
-    for (int i = 1; i < LIMIT; i++) {
+    for (int i = 2; i < LIMIT; i++) {
         if ((abundant[i] = is_abundant(i))) {
-            count++;
+            num_of_abundant_nums++;
         }
     }
 
-    int *abundant_nums = (int *)calloc(count, sizeof(int));
-    if (abundant_nums == NULL) {
-        fprintf(stderr, "Out of memory\n");
-        return 1;
-    }
+    int *abundant_nums = (int *)calloc(num_of_abundant_nums, sizeof(int));
 
     for (int i = 1, idx = 0; i < LIMIT; i++) {
         if (abundant[i]) {
@@ -54,29 +49,37 @@ int main(void)
         }
     }
 
+    // to_be_excluded[n] == 1 if n can be written as the sum of two abundant numbers
+    // to_be_excluded[n] == 0 otherwise
     int to_be_excluded[LIMIT + 1] = {0};
 
-    for (int i = 0; i < count; i++) {
-        int sum = abundant_nums[i] * 2;
-        if (sum > LIMIT) {
-            break;
-        }
-        to_be_excluded[sum] = 1;
+    for (int i = 0; i < num_of_abundant_nums; i++) {
+        int abundant_num_base = abundant_nums[i];
+        int j;
 
-        for (int j = i + 1; j < count; j++) {
-            sum = abundant_nums[i] + abundant_nums[j];
+        for (j = i; j < num_of_abundant_nums; j++) {
+            int sum = abundant_num_base + abundant_nums[j];
+
             if (sum > LIMIT) {
                 break;
             }
+
             to_be_excluded[sum] = 1;
+        }
+        
+        if (j == i) {
+            break;
         }
     }
 
     long total = 0;
+
     for (int i = 0; i <= LIMIT; i++) {
-        if (!to_be_excluded[i]) {
-            total += i;
+        if (to_be_excluded[i]) {
+            continue;
         }
+
+        total += i;
     }
 
     printf("%ld\n", total);

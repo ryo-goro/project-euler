@@ -1,4 +1,5 @@
 // 1000-digit Fibonacci Number
+// 4782
 
 #include <stdio.h>
 
@@ -7,27 +8,33 @@
 
 #define swap(type, x, y) do { type t = x; x = y; y = t; } while (0)
 
-void add(int *dst, const int *src, int src_len)
+void add_arr(int *dst, const int *src, int n)
 {
-    for (int i = 0; i < src_len; i++) {
+    for (int i = 0; i < n; i++) {
         dst[i] += src[i];
     }
 }
 
-int carry(int *digits, int len)
+int carry_digits(int *digits, int len)
 {
-    for (int i = 0; i < len; i++) {
+    if (len <= 0) {
+        return 0;
+    }
+
+    for (int i = 0; i < len - 1; i++) {
         digits[i + 1] += digits[i] / 10;
         digits[i] %= 10;
     }
 
-    while (digits[len] > 0) {
-        digits[len + 1] += digits[len] / 10;
-        digits[len] %= 10;
-        len++;
+    int head = len - 1;
+
+    while (digits[head] >= 10) {
+        digits[head + 1] = digits[head] / 10;
+        digits[head] %= 10;
+        head++;
     }
 
-    return len;
+    return head + 1;
 }
 
 int main(void)
@@ -41,9 +48,9 @@ int main(void)
     int num_of_digits = 1;
 
     while (num_of_digits < THRESHOLD) {
-        add(prev, cur, num_of_digits);
+        add_arr(prev, cur, num_of_digits);
         swap(int *, cur, prev);
-        num_of_digits = carry(cur, num_of_digits);
+        num_of_digits = carry_digits(cur, num_of_digits);
         idx++;
     }
 

@@ -1,56 +1,37 @@
 // Quadratic Primes
+// -59231
+// a = -61, b = 971
 
 #include <stdio.h>
 
-#define PRIMES_NUM 10000
 #define LIMIT 1000
-
-int composite[PRIMES_NUM];
-int primes[PRIMES_NUM];
-int primes_len;
-
-void init_globals(void)
-{
-    composite[0] = composite[1] = 1;
-
-    for (int i = 4; i < PRIMES_NUM; i += 2) {
-        composite[i] = 1;
-    }
-
-    for (int i = 3; i * i < PRIMES_NUM; i += 2) {
-        if (!composite[i]) {
-            for (int j = i * i; j < PRIMES_NUM; j += i) {
-                composite[j] = 1;
-            }
-        }
-    }
-
-    for (int i = 0; i < PRIMES_NUM; i++) {
-        if (!composite[i]) {
-            primes[primes_len++] = i;
-        }
-    }
-}
 
 long absolute(long x)
 {
     return x < 0 ? -x : x;
 }
 
-int is_prime(long x)
+long monic_quadratic(long a, long b, long n)
 {
-    x = absolute(x);
+    return n * n + a * n + b;
+}
 
-    if (x < PRIMES_NUM) {
-        return !composite[x];
+int is_prime(long target)
+{
+    if (target < 2L) {
+        return 0;
     }
 
-    for (int i = 0; i < primes_len; i++) {
-        long p = primes[i];
-        if (x < p * p) {
-            return 1;
-        }
-        if (x % p == 0) {
+    if (target == 2L) {
+        return 1;
+    }
+
+    if (target % 2 == 0L) {
+        return 0;
+    }
+
+    for (long d = 3; d * d <= target; d += 2) {
+        if (target % d == 0L) {
             return 0;
         }
     }
@@ -58,42 +39,36 @@ int is_prime(long x)
     return 1;
 }
 
-long f(long a, long b, long n)
-{
-    return n * n + a * n + b;
-}
-
 int main(void)
 {
-    init_globals();
+    long res_a, res_b;
+    long max_len = 0;
 
-    long a, b;
-    long max_len = 0L;
+    for (long b = -LIMIT; b <= LIMIT; b++) {
+        long abs_b = absolute(b);
 
-    for (long bb = -LIMIT; bb <= LIMIT; bb++) {
-        if (!is_prime(bb)) {
+        if (!is_prime(abs_b)) {
             continue;
         }
 
-        long bb_abs = absolute(bb);
+        for (long a = -LIMIT + 1; a < LIMIT; a++) {
+            long n = 1;
 
-        for (long aa = -LIMIT + 1; aa < LIMIT; aa++) {
-            long n = 1L;
-            for (; n <= bb_abs; n++) {
-                if (!is_prime(f(aa, bb, n))) {
+            for (; n <= abs_b; n++) {
+                if (!is_prime(absolute(monic_quadratic(a, b, n)))) {
                     break;
                 }
             }
 
             if (n > max_len) {
-                a = aa;
-                b = bb;
+                res_a = a;
+                res_b = b;
                 max_len = n;
             }
         }
     }
 
-    printf("%ld\n", a * b);
+    printf("%ld\n", res_a * res_b);
 
     return 0;
 }

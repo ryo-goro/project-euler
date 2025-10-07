@@ -1,32 +1,46 @@
 // Pandigital Products
+// 45228
 
 #include <stdio.h>
 
-int is_pandigital(long a, long b, long c)
+int num_of_digits(long target)
 {
-    int appeared[10] = {0};
+    int len = 1;
+    long pow10 = 10;
+
+    while (target >= pow10) {
+        len++;
+        pow10 *= 10;
+    }
+
+    return len;
+}
+
+int is_pandigital(int a, int b, int c)
+{
+    int counts[10] = {0};
 
     while (a > 0) {
-        appeared[a % 10L]++;
-        a /= 10L;
+        counts[a % 10]++;
+        a /= 10;
     }
 
     while (b > 0) {
-        appeared[b % 10L]++;
-        b /= 10L;
+        counts[b % 10]++;
+        b /= 10;
     }
 
     while (c > 0) {
-        appeared[c % 10L]++;
-        c /= 10L;
+        counts[c % 10]++;
+        c /= 10;
     }
 
-    if (appeared[0]) {
+    if (counts[0] > 0) {
         return 0;
     }
 
     for (int i = 1; i < 10; i++) {
-        if (appeared[i] != 1) {
+        if (counts[i] != 1) {
             return 0;
         }
     }
@@ -34,24 +48,55 @@ int is_pandigital(long a, long b, long c)
     return 1;
 }
 
-void insertion_sort(long *a, int n)
+void insertion_sort(int *arr, int n)
 {
     for (int i = 1; i < n; i++) {
-        if (a[i] < a[i - 1]) {
-            long tmp = a[i];
+        if (arr[i] < arr[i - 1]) {
+            int tmp = arr[i];
             int j = i;
+
             do {
-                a[j] = a[j - 1];
+                arr[j] = arr[j - 1];
                 j--;
-            } while (j > 0 && tmp < a[j - 1]);
-            a[j] = tmp;
+            } while (j > 0 && tmp < arr[j - 1]);
+
+            arr[j] = tmp;
         }
     }
 }
 
+int compress_sorted_arr(int *sorted_arr, int n)
+{
+    if (n <= 0) {
+        return 0;
+    }
+
+    int target = sorted_arr[0];
+    int len = 1;
+
+    for (int i = 1; i < n; i++) {
+        if (target != sorted_arr[i]) {
+            sorted_arr[len++] = target = sorted_arr[i];
+        }
+    }
+
+    return len;
+}
+
+int sumof(const int *arr, int n)
+{
+    int res = 0;
+    
+    for (int i = 0; i < n; i++) {
+        res += arr[i];
+    }
+
+    return res;
+}
+
 int main(void)
 {
-    long results[16];
+    int results[16];
     int count = 0;
 
     // The possible combinations are:
@@ -59,37 +104,39 @@ int main(void)
     // - 2-digit * 3-digit = 4-digit
 
     // 1-digit * 4-digit = 4-digit
-    for (long a = 1L; a < 10L; a++) {
-        for (long b = 1000L; b < 10000L; b++) {
-            long c = a * b;
-            if (is_pandigital(a, b, c)) {
+    for (int a = 1; a < 10; a++) {
+        for (int b = 1000; b < 10000; b++) {
+            long c = ((long)a) * b;
+
+            if (num_of_digits(c) > 4) {
+                break;
+            }
+
+            if (is_pandigital(a, b, (int)c)) {
                 results[count++] = c;
             }
         }
     }
 
     // 2-digit * 3-digit = 4-digit
-    for (long a = 10L; a < 100L; a++) {
-        for (long b = 100L; b < 1000L; b++) {
-            long c = a * b;
-            if (is_pandigital(a, b, c)) {
+    for (int a = 10; a < 100; a++) {
+        for (int b = 100; b < 1000; b++) {
+            long c = ((long)a) * b;
+
+            if (num_of_digits(c) > 4) {
+                break;
+            }
+
+            if (is_pandigital(a, b, (int)c)) {
                 results[count++] = c;
             }
         }
     }
 
     insertion_sort(results, count);
+    int unique_count = compress_sorted_arr(results, count);
 
-    long cur = results[0];
-    long total = cur;
-    for (int i = 1; i < count; i++) {
-        if (results[i] == cur) {
-            continue;
-        }
-        total += (cur = results[i]);
-    }
-
-    printf("%ld\n", total);
+    printf("%d\n", sumof(results, unique_count));
 
     return 0;
 }

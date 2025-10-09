@@ -79,8 +79,7 @@ int main(void)
     long long res = 0;
     long target = 11;   // Begin with the smallest 2-digit prime number
 
-    // Truncatable numbers are 2-digit and prime
-    // So at least they are all odd
+    // Truncatable numbers are 2-digit and prime, so they are all odd
     for (int count = 0; count < LIMIT; target += 2) {
         if (is_truncatable(target)) {
             res += target;

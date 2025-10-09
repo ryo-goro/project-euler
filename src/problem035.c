@@ -6,35 +6,27 @@
 #define LIMIT 1000000L  // 1 million
 #define DIGITS_LIMIT 6
 
-void make_sieve(char *sieve, long sieve_len)
+int is_prime(long target)
 {
-    if (sieve_len <= 0L) {
-        return;
+    if (target < 2L) {
+        return 0;
     }
 
-    sieve[0] = 0;
-
-    if (sieve_len == 1L) {
-        return;
+    if (target == 2L) {
+        return 1;
     }
 
-    sieve[1] = 0;
-
-    for (long i = 2L; i < sieve_len; i++) {
-        sieve[i] = 1;
-    }
-    
-    for (long i = 4L; i < sieve_len; i += 2L) {
-        sieve[i] = 0;
+    if (target % 2 == 0L) {
+        return 0;
     }
 
-    for (long i = 3L; i * i < sieve_len; i += 2L) {
-        if (sieve[i]) {
-            for (long j = i * i; j < sieve_len; j += i) {
-                sieve[j] = 0;
-            }
+    for (long d = 3; d * d <= target; d += 2) {
+        if (target % d == 0L) {
+            return 0;
         }
     }
+
+    return 1;
 }
 
 void insertion_sort(long *arr, int n)
@@ -96,16 +88,13 @@ long power(long a, int n)
 
 int main(void)
 {
-    char prime[LIMIT];
-    make_sieve(prime, LIMIT);
-
     int res = 0;
     int checked[LIMIT] = {0};
 
     // Check 1-digit numbers
     for (int i = 0; i < 10; i++) {
         checked[i] = 1;
-        if (prime[i]) {
+        if (is_prime(i)) {
             res++;
         }
     }
@@ -156,7 +145,7 @@ int main(void)
             // Check if all the rotations of target are prime
             int found = 1;
             for (int i = 0; i < unique_count; i++) {
-                if (!prime[rotations[i]]) {
+                if (!is_prime(rotations[i])) {
                     found = 0;
                     break;
                 }

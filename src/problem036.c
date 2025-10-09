@@ -1,21 +1,25 @@
 // Double-base Palindromes
+// 872187
 
 #include <stdio.h>
 
 #define LIMIT 1000000L  // 1 million
-#define LEN 64
+#define MAX_NUM_OF_DIGITS 64
 
-int is_palindromic(const int *a, int n)
+int is_palindromic(const int *arr, int n)
 {
     for (int i = 0, h = n / 2; i < h; i++) {
-        if (a[i] != a[n - 1 - i]) {
+        if (arr[i] != arr[n - 1 - i]) {
             return 0;
         }
     }
     return 1;
 }
 
-int fill_digits(int *digits, long target, int base)
+// ex. target = 123, base = 10 -> digits = {3, 2, 1} and the function returns 3
+// ex. target = 31,  base = 2  -> digits = {1, 1, 1, 1, 1} and the function returns 5
+// base should be > 1
+int long_to_arr(int *digits, long target, int base)
 {
     int len = 0;
 
@@ -29,18 +33,16 @@ int fill_digits(int *digits, long target, int base)
 
 int main(void)
 {
-    int digits[LEN];
-    int len;
+    int digits[MAX_NUM_OF_DIGITS];
+    long long res = 0;
 
-    long long res = 0LL;
-
-    for (long x = 1L; x < LIMIT; x++) {
-        len = fill_digits(digits, x, 10);
+    for (long x = 1; x < LIMIT; x++) {
+        int len = long_to_arr(digits, x, 10);
         if (!is_palindromic(digits, len)) {
             continue;
         }
 
-        len = fill_digits(digits, x, 2);
+        len = long_to_arr(digits, x, 2);
         if (!is_palindromic(digits, len)) {
             continue;
         }

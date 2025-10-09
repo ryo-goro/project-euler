@@ -110,32 +110,50 @@ int main(void)
         }
     }
 
-    for (int num_of_digits = 2; num_of_digits <= DIGITS_LIMIT; num_of_digits++) {
-        long pow10 = power(10, num_of_digits - 1);
+    // The units digit of a prime number with two or more digits is either 1, 3, 7, or 9
+    // So the digits of any circular prime number with two or more digits are either 1, 3, 7, or 9
+    int digits[] = {1, 3, 7, 9};
+    int num_of_digits = sizeof(digits) / sizeof(digits[0]);
+
+    for (int digit_count = 2; digit_count <= DIGITS_LIMIT; digit_count++) {
+        long pow10 = power(10, digit_count - 1);
         long rotations[DIGITS_LIMIT];
 
-        // Check `num_of_digits`-digit numbers
-        for (long p = pow10; p < pow10 * 10; p++) {
-            if (checked[p]) {
+        // Check `digit_count`-digit numbers
+        // Note that the number of those numbers is 4^digit_count,
+        // as the digits of the numbers are either 1, 3, 7, or 9
+        for (long seed = 0, limit = power(num_of_digits, digit_count); seed < limit; seed++) {
+            long tmp_seed = seed;
+            long target = 0;
+
+            // Convert seed to target
+            // ex. digit_count = 3, seed = 0 = 000 (in base 4) -> target = 111
+            // ex. digit_count = 4, seed = 27 = 0123 (in base 4) -> target = 9731
+            for (int i = 0; i < digit_count; i++) {
+                target = target * 10 + digits[tmp_seed % num_of_digits];
+                tmp_seed /= num_of_digits;
+            }
+
+            if (checked[target]) {
                 continue;
             }
             
-            // Collect all the rotations of p
-            rotations[0] = p;
-            for (int i = 1; i < num_of_digits; i++) {
+            // Collect all the rotations of target
+            rotations[0] = target;
+            for (int i = 1; i < digit_count; i++) {
                 rotations[i] = rotate(rotations[i - 1], pow10);
             }
 
             // Remove duplication
-            insertion_sort(rotations, num_of_digits);
-            int unique_count = compress_sorted_arr(rotations, num_of_digits);
+            insertion_sort(rotations, digit_count);
+            int unique_count = compress_sorted_arr(rotations, digit_count);
 
-            // Mark all the rotations of p as checked
+            // Mark all the rotations of target as checked
             for (int i = 0; i < unique_count; i++) {
                 checked[rotations[i]] = 1;
             }
 
-            // Check if all the rotations of p are prime
+            // Check if all the rotations of target are prime
             int found = 1;
             for (int i = 0; i < unique_count; i++) {
                 if (!prime[rotations[i]]) {

@@ -1,4 +1,5 @@
 // Integer Right Triangles
+// 840
 
 #include <stdio.h>
 
@@ -14,7 +15,7 @@ int main(void)
         for (int a = 1, alim = p / 3; a < alim; a++) {
             for (int b = a + 1, blim = (p - a + 1) / 2; b < blim; b++) {
                 int c = p - a - b;
-                if ((long)a * a + (long)b * b == (long)c * c) {
+                if (((long)a) * a + ((long)b) * b == ((long)c) * c) {
                     count++;
                 }
             }

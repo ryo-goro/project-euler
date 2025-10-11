@@ -16,8 +16,8 @@ int is_palindromic(const int *arr, int n)
     return 1;
 }
 
-// ex. target = 123, base = 10 -> digits = {3, 2, 1} and the function returns 3
-// ex. target = 31,  base = 2  -> digits = {1, 1, 1, 1, 1} and the function returns 5
+// Example: target = 123, base = 10 -> digits = {3, 2, 1} and the function returns 3
+// Example: target = 31,  base = 2  -> digits = {1, 1, 1, 1, 1} and the function returns 5
 // base should be > 1
 int long_to_arr(int *digits, long target, int base)
 {

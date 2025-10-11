@@ -65,7 +65,7 @@ int is_prime(long target)
     return 1;
 }
 
-// ex. [1, 2, 3, 4] => 1234
+// Example: [1, 2, 3, 4] => 1234
 long to_long(const int *digits, int num_of_digits)
 {
     long res = 0;

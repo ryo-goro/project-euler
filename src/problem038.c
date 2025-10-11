@@ -40,8 +40,8 @@ int is_pandigital(long long x)
     return 1;
 }
 
-// ex. concat(12, 345) = 12345
-// ex. concat(1000, 0) = 10000
+// Example: concat(12, 345) = 12345
+// Example: concat(1000, 0) = 10000
 long long concat(long long a, long long b)
 {
     long long pow10 = 10;
@@ -64,7 +64,7 @@ int main(void)
     // - x has at most 4 digits
     // - x does not have 0 as any of its digits
     for (int right = 1; right < 1000; right++) {
-        // ex. right = 123 -> x = 9123
+        // Example: right = 123 -> x = 9123
         int x = (int)concat(9, right);
         long long candidate = x;
 

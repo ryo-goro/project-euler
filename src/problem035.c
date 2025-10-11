@@ -65,9 +65,9 @@ int compress_sorted_arr(long *sorted_arr, int n)
 }
 
 // `pow10` should be 10^n where n is the number of digits of `target` including leading 0s
-// ex. rotate(123, 100) = 231
-// ex. rotate(3051, 1000) = (0)513
-// ex. rotate(513, 1000) = rotate((0)513, 1000) = 5130
+// Example: rotate(123, 100) = 231
+// Example: rotate(3051, 1000) = (0)513
+// Example: rotate(513, 1000) = rotate((0)513, 1000) = 5130
 long rotate(long target, long pow10)
 {
     return target % pow10 * 10 + target / pow10;
@@ -116,8 +116,8 @@ int main(void)
             long target = 0;
 
             // Convert seed to target
-            // ex. digit_count = 3, seed = 0 = 000 (in base 4) -> target = 111
-            // ex. digit_count = 4, seed = 27 = 0123 (in base 4) -> target = 9731
+            // Example: digit_count = 3, seed = 0 = 000 (in base 4) -> target = 111
+            // Example: digit_count = 4, seed = 27 = 0123 (in base 4) -> target = 9731
             for (int i = 0; i < digit_count; i++) {
                 target = target * 10 + digits[tmp_seed % num_of_digits];
                 tmp_seed /= num_of_digits;

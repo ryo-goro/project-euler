@@ -1,24 +1,32 @@
 // Coded Triangle Numbers
+// 162
 
 #include <stdio.h>
 
 #define BUF_LEN 256
 
-int is_triangle(const char *str)
+int is_triangle(int target)
 {
-    int n = 0;
-    while (*str) {
-        n += *str++ - 'A' + 1;
+    int triangle_idx = 0;
+    int triangle_num = 0;
+
+    while (triangle_num < target) {
+        triangle_idx++;
+        triangle_num += triangle_idx;
     }
 
-    int t = 1;
-    int m = 1;
+    return triangle_num == target;
+}
 
-    while (t < n) {
-        t += ++m;
+int word_score(const char *word)
+{
+    int score = 0;
+
+    while (*word) {
+        score += *word++ - 'A' + 1;
     }
 
-    return t == n;
+    return score;
 }
 
 int read_word(FILE *fp, char *dest)
@@ -54,7 +62,7 @@ int main(void)
     }
 
     while (read_word(fp, buf)) {
-        if (is_triangle(buf)) {
+        if (is_triangle(word_score(buf))) {
             count++;
         }
     }

@@ -1,70 +1,75 @@
 // Pandigital Prime
+// 7652413
 
 #include <stdio.h>
 
 #define swap(type, x, y)    do { type t = x; x = y; y = t; } while (0)
 
-void reverse(int *a, int l, int r)
+void reverse_arr(int *arr, int begin, int end)
 {
-    for (int i = 0, h = (r - l) / 2; i < h; i++) {
-        swap(int, a[l + i], a[r - 1 - i]);
+    for (int i = 0, h = (end - begin) / 2; i < h; i++) {
+        int tmp = arr[begin + i];
+        arr[begin + i] = arr[end - 1 - i];
+        arr[end - 1 - i] = tmp;
     }
 }
 
-int next_permutation_desc(int *a, int n)
+int next_permutation_desc(int *perm, int perm_len)
 {
-    int i = n - 2;
+    int i = perm_len - 2;
     for (; i >= 0; i--) {
-        if (a[i] > a[i + 1]) {
+        if (perm[i] > perm[i + 1]) {
             break;
         }
     }
 
     if (i < 0) {
-        reverse(a, 0, n);
+        reverse_arr(perm, 0, perm_len);
         return 0;
     }
 
-    int tmp = a[i];
-    int j = n - 1;
+    int tmp = perm[i];
+    int j = perm_len - 1;
     for (; j > i; j--) {
-        if (a[j] < tmp) {
+        if (perm[j] < tmp) {
             break;
         }
     }
 
-    swap(int, a[i], a[j]);
-    reverse(a, i + 1, n);
+    swap(int, perm[i], perm[j]);
+    reverse_arr(perm, i + 1, perm_len);
 
     return 1;
 }
 
+// Example: to_long({9, 6, 7, 8}, 3) = 769
 long to_long(const int *digits, int n)
 {
-    long res = digits[0];
-    for (int i = 1; i < n; i++) {
+    long res = 0;
+
+    for (int i = 0; i < n; i++) {
         res = res * 10 + digits[i];
     }
 
     return res;
 }
 
-int is_prime(long n)
+int is_prime(long target)
 {
-    if (n < 2L) {
+    if (target < 2L) {
         return 0;
     }
 
-    if (n == 2L) {
+    if (target == 2L) {
         return 1;
     }
 
-    if (n % 2L == 0L) {
+    if (target % 2 == 0L) {
         return 0;
     }
 
-    for (long d = 3L; d * d <= n; d += 2L) {
-        if (n % d == 0L) {
+    for (long d = 3; d * d <= target; d += 2) {
+        if (target % d == 0L) {
             return 0;
         }
     }
@@ -74,31 +79,29 @@ int is_prime(long n)
 
 int main(void)
 {
-    long res, candidate;
     // By checking whether the sum of each digit is divisible by 3,
-    // we see that only 4- or 7-digit pandigital numbers can be prime
-
-    // Scan 4-digit pandigital numbers in descending order
-    int a[] = {4, 3, 2, 1};
-    do {
-        candidate = to_long(a, 4);
-        if (is_prime(candidate)) {
-            res = candidate;
-            break;
-        }
-    } while (next_permutation_desc(a, 4));
+    // we see that only 4 or 7-digit pandigital numbers can be prime
 
     // Scan 7-digit pandigital numbers in descending order
-    int b[] = {7, 6, 5, 4, 3, 2, 1};
+    int digits7[] = {7, 6, 5, 4, 3, 2, 1};
     do {
-        candidate = to_long(b, 7);
+        long candidate = to_long(digits7, 7);
         if (is_prime(candidate)) {
-            res = candidate;
+            printf("%ld\n", candidate);
+
+            return 0;
+        }
+    } while (next_permutation_desc(digits7, 7));
+
+    // Scan 4-digit pandigital numbers in descending order
+    int digits4[] = {4, 3, 2, 1};
+    do {
+        long candidate = to_long(digits4, 4);
+        if (is_prime(candidate)) {
+            printf("%ld\n", candidate);
             break;
         }
-    } while (next_permutation_desc(b, 7));
-
-    printf("%ld\n", res);
+    } while (next_permutation_desc(digits4, 4));
 
     return 0;
 }

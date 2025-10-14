@@ -1,6 +1,7 @@
 // Coded Triangle Numbers
 // 162
 
+#include <ctype.h>
 #include <stdio.h>
 
 #define BUF_LEN 256
@@ -29,39 +30,57 @@ int word_score(const char *word)
     return score;
 }
 
+// Reads consecutive uppercase letters from a file into an array
+// and returns the number of letters read
+// Needs <ctype.h>
 int read_word(FILE *fp, char *dest)
 {
     int ch;
-    if ((ch = fgetc(fp)) == EOF) {
+
+    // Ignore leading chararacters that are not uppercase letters
+    while ((ch = fgetc(fp)) != EOF) {
+        if (isupper(ch)) {
+            break;
+        }
+    }
+
+    if (ch == EOF) {
+        *dest = '\0';
         return 0;
     }
 
-    while (ch == '"' || ch == ',') {
-        ch = fgetc(fp);
+    // Here, ch is an uppercase letter
+    *dest++ = ch;
+    int word_len = 1;
+
+    while ((ch = fgetc(fp)) != EOF) {
+        if (!isupper(ch)) {
+            *dest = '\0';
+            return word_len;
+        }
+
+        *dest++ = ch;
+        word_len++;
     }
 
-    do {
-        *dest++ = ch;
-    } while ((ch = fgetc(fp)) != '"');
-
     *dest = '\0';
-
-    return 1;
+    return word_len;
 }
 
 int main(void)
 {
-    int count = 0;
-    char buf[BUF_LEN];
-
-    FILE *fp = fopen("../text/problem042.txt", "r");
+    const char *text_path = "../text/problem042.txt";
+    FILE *fp = fopen(text_path, "r");
 
     if (fp == NULL) {
-        fprintf(stderr, "Cannot open ../text/problem042.txt\n");
+        fprintf(stderr, "Cannot open %s\n", text_path);
         return 1;
     }
 
-    while (read_word(fp, buf)) {
+    int count = 0;
+    char buf[BUF_LEN];
+
+    while (read_word(fp, buf) > 0) {
         if (is_triangle(word_score(buf))) {
             count++;
         }

@@ -5,7 +5,7 @@
 
 #include <stdio.h>
 
-#define LIMIT 3000
+#define INFINITY (1LL << 32)    // Good enough as long as it's >= 5482660
 
 // Returns n * (3 * n - 1) / 2, the n-th pentagonal number
 long long pentagonal_number(long long n)
@@ -45,24 +45,27 @@ int is_pentagonal(unsigned long long target)
 
 int main(void)
 {
-    long long res_diff = -1;
-
-    for (int i = 2; i < LIMIT; i++) {
+    long long res_diff = INFINITY;
+    
+    // To verify the minimality of res_diff after we find a candidate,
+    // we need to run this loop until there will not be other candidates,
+    // that is, until i no longer satisfies p_i - p_{i - 1} < res_diff
+    for (long i = 2; /* p_i - p_{i - 1} = */ 3 * i - 2 < res_diff; i++) {
         long long p_i = pentagonal_number(i);
 
-        for (int j = 1; j < i; j++) {
+        for (long j = i - 1; j > 0L; j--) {
             long long p_j = pentagonal_number(j);
             long long diff = p_i - p_j;
             long long sum = p_i + p_j;
 
-            if (is_pentagonal(diff) && is_pentagonal(sum)) {
-                res_diff = diff;
-                break;
+            if (diff >= res_diff) {
+                break;  // No need to continue the "j" loop because diff gets larger as j decrements
             }
-        }
 
-        if (res_diff > 0LL) {
-            break;
+            if (is_pentagonal(diff) && is_pentagonal(sum)) {
+                res_diff = diff;    // Now diff is a candidate for the answer
+                break;  // No need to continue the "j" loop because diff gets larger as j decrements
+            }
         }
     }
 

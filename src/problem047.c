@@ -1,4 +1,5 @@
 // Distinct Primes Factors
+// 134043
 
 #include <stdio.h>
 
@@ -9,16 +10,18 @@ int num_of_prime_factors(long n)
 {
     int count = 0;
 
-    if (n % 2L == 0L) {
+    if (n % 2 == 0L) {
         count++;
+
         do {
-            n /= 2L;
-        } while (n % 2L == 0L);
+            n /= 2;
+        } while (n % 2 == 0L);
     }
 
-    for (long d = 3L; d * d <= n; d += 2L) {
+    for (long d = 3; d * d <= n; d += 2) {
         if (n % d == 0L) {
             count++;
+
             do {
                 n /= d;
             } while (n % d == 0L);
@@ -34,12 +37,14 @@ int num_of_prime_factors(long n)
 
 int main(void)
 {
-    long n;
+    long n = 1;
     int count = 0;
 
-    for (n = 1L; ; n++) {
+    for (;; n++) {
         if (num_of_prime_factors(n) == NUM_OF_PRIME_FACTORS) {
-            if (++count == COUNT) {
+            count++;
+
+            if (count == COUNT) {
                 break;
             }
         } else {

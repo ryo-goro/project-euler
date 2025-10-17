@@ -19,7 +19,7 @@ int is_palindromic(const int *arr, int n)
 // Example: target = 123, base = 10 -> digits = {3, 2, 1} and the function returns 3
 // Example: target = 31,  base = 2  -> digits = {1, 1, 1, 1, 1} and the function returns 5
 // base should be > 1
-int long_to_arr(int *digits, long target, int base)
+int to_digits_rev(int *digits, long target, int base)
 {
     int len = 0;
 
@@ -37,12 +37,12 @@ int main(void)
     long long res = 0;
 
     for (long x = 1; x < LIMIT; x++) {
-        int len = long_to_arr(digits, x, 10);
+        int len = to_digits_rev(digits, x, 10);
         if (!is_palindromic(digits, len)) {
             continue;
         }
 
-        len = long_to_arr(digits, x, 2);
+        len = to_digits_rev(digits, x, 2);
         if (!is_palindromic(digits, len)) {
             continue;
         }

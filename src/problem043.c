@@ -42,8 +42,8 @@ int next_permutation(int *perm, int perm_len)
     return 1;
 }
 
-// Example: to_ll_rev({9, 6, 7, 8}, 3) = 967
-long long to_ll_rev(const int *digits, int n)
+// Example: to_ll({9, 6, 7, 8}, 3) = 967
+long long to_ll(const int *digits, int n)
 {
     long long res = 0;
 
@@ -54,8 +54,8 @@ long long to_ll_rev(const int *digits, int n)
     return res;
 }
 
-// Example: to_int_rev({9, 6, 7, 8, 9}, 1, 3) = 67
-int to_int_rev(const int *digits, int begin, int end)
+// Example: to_int({9, 6, 7, 8, 9}, 1, 3) = 67
+int to_int(const int *digits, int begin, int end)
 {
     int res = 0;
 
@@ -80,13 +80,13 @@ int main(void)
         int i = 0;
 
         for (; i < num_of_primes; i++) {
-            if (to_int_rev(digits, i + 1, i + 4) % primes[i] != 0) {
+            if (to_int(digits, i + 1, i + 4) % primes[i] != 0) {
                 break;
             }
         }
 
         if (i == num_of_primes) {
-            res += to_ll_rev(digits, num_of_digits);
+            res += to_ll(digits, num_of_digits);
         }
     } while (next_permutation(digits, num_of_digits));
 

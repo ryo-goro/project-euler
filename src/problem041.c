@@ -42,8 +42,8 @@ int next_permutation_desc(int *perm, int perm_len)
     return 1;
 }
 
-// Example: to_long_rev({9, 6, 7, 8}, 3) = 967
-long to_long_rev(const int *digits, int n)
+// Example: to_long({9, 6, 7, 8}, 3) = 967
+long to_long(const int *digits, int n)
 {
     long res = 0;
 
@@ -85,7 +85,7 @@ int main(void)
     // Scan 7-digit pandigital numbers in descending order
     int digits7[] = {7, 6, 5, 4, 3, 2, 1};
     do {
-        long candidate = to_long_rev(digits7, 7);
+        long candidate = to_long(digits7, 7);
         if (is_prime(candidate)) {
             printf("%ld\n", candidate);
 
@@ -96,7 +96,7 @@ int main(void)
     // Scan 4-digit pandigital numbers in descending order
     int digits4[] = {4, 3, 2, 1};
     do {
-        long candidate = to_long_rev(digits4, 4);
+        long candidate = to_long(digits4, 4);
         if (is_prime(candidate)) {
             printf("%ld\n", candidate);
             break;

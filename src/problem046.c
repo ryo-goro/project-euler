@@ -1,23 +1,24 @@
 // Goldbach's Other Conjecture
+// 5777
 
 #include <stdio.h>
 
-int is_prime(long n)
+int is_prime(long target)
 {
-    if (n < 2L) {
+    if (target < 2L) {
         return 0;
     }
 
-    if (n == 2L) {
+    if (target == 2L) {
         return 1;
     }
 
-    if (n % 2L == 0L) {
+    if (target % 2 == 0L) {
         return 0;
     }
 
-    for (long d = 3L; d * d <= n; d += 2L) {
-        if (n % d == 0L) {
+    for (long d = 3; d * d <= target; d += 2) {
+        if (target % d == 0L) {
             return 0;
         }
     }
@@ -25,29 +26,34 @@ int is_prime(long n)
     return 1;
 }
 
+// Returns 1 if odd_composite can be written as the sum of a prime and twice a square
+// Returns 0 otherwise
+// odd_composite should be a positive odd composite number
+int is_goldbach_composite(long odd_composite)
+{
+    for (long i = 1; ; i++) {
+        long square2 = 2 * i * i;
+
+        if (square2 >= odd_composite) {
+            return 0;
+        }
+
+        if (is_prime(odd_composite - square2)) {
+            return 1;
+        }
+    }
+}
+
 int main(void)
 {
-    long n;
+    long n = 9; // The first composite odd number
 
-    for (n = 9L; ; n += 2L) {
+    for (;; n += 2) {
         if (is_prime(n)) {
             continue;
         }
 
-        int found = 1;
-
-        for (long i = 1L, square_2; ; i++) {
-            square_2 = 2L * i * i;
-            if (square_2 >= n) {
-                break;
-            }
-            if (is_prime(n - square_2)) {
-                found = 0;
-                break;
-            }
-        }
-
-        if (found) {
+        if (!is_goldbach_composite(n)) {
             break;
         }
     }

@@ -1,49 +1,54 @@
 // Prime Permutations
+// 296962999629
 
 #include <stdio.h>
 
 #define LIMIT 10000
 #define NUM_OF_DIGITS 4
-#define BUF_LEN 32
+#define BUF_LEN 32  // Good enough as long as it's >= NUM_OF_DIGITS! = 4! = 24
 
 #define swap(type, x, y)    do { type t = x; x = y; y = t; } while (0)
 
-void reverse(int *a, int l, int r)
+void reverse_arr(int *arr, int begin, int end)
 {
-    for (int i = 0, h = (r - l) / 2; i < h; i++) {
-        swap(int, a[l + i], a[r - 1 - i]);
+    for (int i = 0, h = (end - begin) / 2; i < h; i++) {
+        int tmp = arr[begin + i];
+        arr[begin + i] = arr[end - 1 - i];
+        arr[end - 1 - i] = tmp;
     }
 }
 
-int next_permutation(int *a, int n)
+int next_permutation(int *perm, int perm_len)
 {
-    int i = n - 2;
+    int i = perm_len - 2;
     for (; i >= 0; i--) {
-        if (a[i] < a[i + 1]) {
+        if (perm[i] < perm[i + 1]) {
             break;
         }
     }
 
     if (i < 0) {
-        reverse(a, 0, n);
+        reverse_arr(perm, 0, perm_len);
         return 0;
     }
 
-    int tmp = a[i];
-    int j = n - 1;
+    int tmp = perm[i];
+    int j = perm_len - 1;
     for (; j > i; j--) {
-        if (a[j] > tmp) {
+        if (perm[j] > tmp) {
             break;
         }
     }
 
-    swap(int, a[i], a[j]);
-    reverse(a, i + 1, n);
+    swap(int, perm[i], perm[j]);
+    reverse_arr(perm, i + 1, perm_len);
 
     return 1;
 }
 
-void to_array(int *digits, int num_of_digits, int target)
+// num_of_digits is the number of digits of target
+// Example: num_of_digits = 3, target = 123 -> digits = {1, 2, 3}
+void to_digits(int *digits, int num_of_digits, int target)
 {
     for (int i = num_of_digits - 1; i >= 0; i--) {
         digits[i] = target % 10;
@@ -51,31 +56,43 @@ void to_array(int *digits, int num_of_digits, int target)
     }
 }
 
-int to_int(const int *digits, int num_of_digits)
+// Example: to_int({9, 6, 7, 8}, 3) = 967
+int to_int(const int *digits, int n)
 {
     int res = 0;
-    for (int i = 0; i < num_of_digits; i++) {
+
+    for (int i = 0; i < n; i++) {
         res = res * 10 + digits[i];
     }
 
     return res;
 }
 
-void make_sieve(int *sieve, int n)
+void make_sieve(char *sieve, long sieve_len)
 {
-    for (int i = 0; i < n; i++) {
-        sieve[i] = 1;
+    if (sieve_len <= 0L) {
+        return;
     }
 
-    sieve[0] = sieve[1] = 0;
+    sieve[0] = 0;
 
-    for (int i = 4; i < n; i += 2) {
+    if (sieve_len == 1L) {
+        return;
+    }
+
+    sieve[1] = 0;
+
+    for (long i = 2L; i < sieve_len; i++) {
+        sieve[i] = 1;
+    }
+    
+    for (long i = 4L; i < sieve_len; i += 2L) {
         sieve[i] = 0;
     }
 
-    for (int i = 3; i * i < n; i += 2) {
+    for (long i = 3L; i * i < sieve_len; i += 2L) {
         if (sieve[i]) {
-            for (int j = i * i; j < n; j += i) {
+            for (long j = i * i; j < sieve_len; j += i) {
                 sieve[j] = 0;
             }
         }
@@ -84,55 +101,48 @@ void make_sieve(int *sieve, int n)
 
 int main(void)
 {
-    int prime[LIMIT];
+    char prime[LIMIT];
     make_sieve(prime, LIMIT);
 
     int checked[LIMIT] = {0};
-    checked[1487] = 1;
 
-    int digits[NUM_OF_DIGITS];
-    int buf[BUF_LEN];
-    int buf_size;
-
-    for (int target = LIMIT / 10; target < LIMIT; target++) {
-        if (checked[target]) {
+    for (int perm_seed = LIMIT / 10; perm_seed < LIMIT; perm_seed++) {
+        if (checked[perm_seed]) {
             continue;
         }
 
-        if (!prime[target]) {
-            continue;
-        }
+        int digits[NUM_OF_DIGITS];
+        to_digits(digits, NUM_OF_DIGITS, perm_seed);
 
-        buf[0] = target;
-        buf_size = 1;
+        int buf[BUF_LEN];
+        int buf_size = 0;
 
-        to_array(digits, NUM_OF_DIGITS, target);
-
-        while (next_permutation(digits, NUM_OF_DIGITS)) {
+        do {
             int perm = to_int(digits, NUM_OF_DIGITS);
             checked[perm] = 1;
 
             if (prime[perm]) {
                 buf[buf_size++] = perm;
             }
-        }
+        } while (next_permutation(digits, NUM_OF_DIGITS));
 
-        if (buf_size < 3) {
-            continue;
-        }
-
-        int first, second, third, diff;
+        // buf[] consists of prime numbers that are strictly monotonically increasing
 
         for (int i = 0; i < buf_size - 2; i++) {
-            first = buf[i];
+            int first = buf[i];
 
             for (int j = i + 1; j < buf_size - 1; j++) {
-                second = buf[j];
-                diff = second - first;
+                int second = buf[j];
+                int diff = second - first;
 
                 for (int k = j + 1; k < buf_size; k++) {
-                    third = buf[k];
+                    int third = buf[k];
+
                     if (third - second == diff) {
+                        if (first == 1487 && second == 4817 && third == 8147) {
+                            continue;   // We need to find a sequence other than 1487, 4817, 8147
+                        }
+
                         printf("%d%d%d\n", first, second, third);
                         return 0;
                     }
@@ -141,5 +151,5 @@ int main(void)
         }
     }
 
-    return 1;
+    return 1;   // Will not reach here
 }

@@ -1,25 +1,37 @@
 // Consecutive Prime Sum
+// 997651
+// 7 + ... + 3931 = 997651 (sum of 543 consecutive primes)
 
 #include <stdio.h>
 #include <stdlib.h>
 
 #define LIMIT 1000000L  // 1 million
 
-void make_sieve(int *sieve, long n)
+void make_sieve(char *sieve, long sieve_len)
 {
-    sieve[0] = sieve[1] = 0;
-
-    for (long i = 2; i < n; i++) {
-        sieve[i] = 1;
+    if (sieve_len <= 0L) {
+        return;
     }
 
-    for (long i = 4; i < n; i += 2) {
+    sieve[0] = 0;
+
+    if (sieve_len == 1L) {
+        return;
+    }
+
+    sieve[1] = 0;
+
+    for (long i = 2L; i < sieve_len; i++) {
+        sieve[i] = 1;
+    }
+    
+    for (long i = 4L; i < sieve_len; i += 2L) {
         sieve[i] = 0;
     }
 
-    for (long i = 3; i * i < n; i += 2) {
+    for (long i = 3L; i * i < sieve_len; i += 2L) {
         if (sieve[i]) {
-            for (long j = i * i; j < n; j += i) {
+            for (long j = i * i; j < sieve_len; j += i) {
                 sieve[j] = 0;
             }
         }
@@ -28,53 +40,57 @@ void make_sieve(int *sieve, long n)
 
 int main(void)
 {
-    int prime_sieve[LIMIT];
-    make_sieve(prime_sieve, LIMIT);
+    char prime[LIMIT];
+    make_sieve(prime, LIMIT);
 
-    long num_of_primes = 1;
+    // Count prime numbers below LIMIT
+    long num_of_primes = 1; // 2 is the only even prime number
     for (long p = 3; p < LIMIT; p += 2) {
-        if (prime_sieve[p]) {
+        if (prime[p]) {
             num_of_primes++;
         }
     }
 
-    long *primes = calloc(num_of_primes + 1, sizeof(long));
-    primes[1] = 2;
+    // prime_nums[0] = 0, prime_nums[i] = the i-th prime number (i > 0)
+    long *prime_nums = calloc(num_of_primes + 1, sizeof(long));
+
+    // Pack prime numbers below LIMIT into an array
+    prime_nums[1] = 2;
     for (long p = 3, i = 2; p < LIMIT; p += 2) {
-        if (prime_sieve[p]) {
-            primes[i++] = p;
+        if (prime[p]) {
+            prime_nums[i++] = p;
         }
     }
 
-    long res = 0;    
-    long base_sum = 0;
+    long res = 2;   // 2 is prime, and can be written as the sum of 1 consecutive prime number
+    long least_sum = 0;
 
-    for (long from = 1, to = 1; to <= num_of_primes; from++, to++) {
-        base_sum += primes[to] - primes[from - 1];  // base_sum = primes[from] + primes[from + 1] + ... + primes[to]
-        if (base_sum >= LIMIT) {
+    for (long first = 1, last = 1; last <= num_of_primes; first++, last++) {
+        least_sum += prime_nums[last] - prime_nums[first - 1];  // least_sum = primes[first] + primes[first + 1] + ... + primes[last]
+
+        if (least_sum >= LIMIT) {
             break;
         }
-        if (prime_sieve[base_sum]) {
-            res = base_sum;
-        }
 
-        long sum = base_sum;
+        long trial_sum = least_sum;
 
-        for (long i = to + 1; i <= num_of_primes; i++) {
-            sum += primes[i];
-            if (sum >= LIMIT) {
+        for (long i = last + 1; i <= num_of_primes; i++) {
+            trial_sum += prime_nums[i];
+
+            if (trial_sum >= LIMIT) {
                 break;
             }
-            if (prime_sieve[sum]) {
-                res = base_sum = sum;
-                to = i;
+
+            if (prime[trial_sum]) {
+                res = least_sum = trial_sum;
+                last = i;
             }
         }
     }
 
-    printf("%ld\n", res);   // 7 + ... + 3931 = 997651 (sum of 543 consecutive primes)
+    printf("%ld\n", res);
 
-    free(primes);
+    free(prime_nums);
 
     return 0;
 }

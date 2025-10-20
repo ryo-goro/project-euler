@@ -1,4 +1,5 @@
 // Prime Digit Replacements
+// 121313
 
 #include <stdio.h>
 
@@ -7,37 +8,39 @@
 
 #define swap(type, x, y)    do { type t = x; x = y; y = t; } while (0)
 
-void reverse(int *a, int l, int r)
+void reverse_arr(int *arr, int begin, int end)
 {
-    for (int i = 0, h = (r - l) / 2; i < h; i++) {
-        swap(int, a[l + i], a[r - 1 - i]);
+    for (int i = 0, h = (end - begin) / 2; i < h; i++) {
+        int tmp = arr[begin + i];
+        arr[begin + i] = arr[end - 1 - i];
+        arr[end - 1 - i] = tmp;
     }
 }
 
-int next_permutation(int *a, int n)
+int next_permutation(int *perm, int perm_len)
 {
-    int i = n - 2;
+    int i = perm_len - 2;
     for (; i >= 0; i--) {
-        if (a[i] < a[i + 1]) {
+        if (perm[i] < perm[i + 1]) {
             break;
         }
     }
 
     if (i < 0) {
-        reverse(a, 0, n);
+        reverse_arr(perm, 0, perm_len);
         return 0;
     }
 
-    int tmp = a[i];
-    int j = n - 1;
+    int tmp = perm[i];
+    int j = perm_len - 1;
     for (; j > i; j--) {
-        if (a[j] > tmp) {
+        if (perm[j] > tmp) {
             break;
         }
     }
 
-    swap(int, a[i], a[j]);
-    reverse(a, i + 1, n);
+    swap(int, perm[i], perm[j]);
+    reverse_arr(perm, i + 1, perm_len);
 
     return 1;
 }
@@ -65,12 +68,12 @@ int is_prime(long target)
     return 1;
 }
 
-// Example: [1, 2, 3, 4] => 1234
-long to_long(const int *digits, int num_of_digits)
+// Example: to_long({9, 6, 7, 8}, 3) = 967
+long to_long(const int *digits, int n)
 {
     long res = 0;
 
-    for (int i = 0; i < num_of_digits; i++) {
+    for (int i = 0; i < n; i++) {
         res = res * 10 + digits[i];
     }
 
@@ -80,8 +83,9 @@ long to_long(const int *digits, int num_of_digits)
 // Returns a^n
 long power(long a, int n)
 {
-    long res = a;
-    for (int i = 1; i < n; i++) {
+    long res = 1;
+
+    for (int i = 0; i < n; i++) {
         res *= a;
     }
 
@@ -103,7 +107,7 @@ int main(void)
             for (int i = num_of_asters; i < num_of_digits - 1; i++) {
                 aster_pos[i] = 0;
             }
-            reverse(aster_pos, 0, num_of_digits - 1);
+            reverse_arr(aster_pos, 0, num_of_digits - 1);
 
             long power10 = power(10, num_of_digits - 1 - num_of_asters);
 

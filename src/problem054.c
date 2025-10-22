@@ -257,197 +257,240 @@ Hand get_hand(const Card *sorted_cards)
     return HighCard;
 }
 
+
+void make_numbers_for_HighCard_Straight_StraightFlush(const Card *sorted_cards, int *numbers)
+{
+    if (sorted_cards[0].number == 1) {
+        numbers[0] = 14;
+        for (int i = 1; i < NUM_OF_CARDS; i++) {
+            numbers[i] = sorted_cards[NUM_OF_CARDS - i].number;
+        }
+    } else {
+        for (int i = 0; i < NUM_OF_CARDS; i++) {
+            numbers[i] = sorted_cards[NUM_OF_CARDS - 1 - i].number;
+        }
+    }
+}
+
+void make_numbers_for_OnePair(const Card *sorted_cards, int *numbers)
+{
+    int main_idx, low_idx, mid_idx, high_idx;
+
+    if (sorted_cards[0].number == sorted_cards[1].number) {
+        main_idx = 0;
+        low_idx = 2;
+        mid_idx = 3;
+        high_idx = 4;
+    } else if (sorted_cards[1].number == sorted_cards[2].number) {
+        main_idx = 1;
+        low_idx = 0;
+        mid_idx = 3;
+        high_idx = 4;
+    } else if (sorted_cards[2].number == sorted_cards[3].number) {
+        main_idx = 2;
+        low_idx = 0;
+        mid_idx = 1;
+        high_idx = 4;
+    } else {
+        main_idx = 3;
+        low_idx = 0;
+        mid_idx = 1;
+        high_idx = 2;
+    }
+
+    int main = sorted_cards[main_idx].number;
+
+    if (main == 1) {
+        main = 14;
+    }
+
+    int low_kicker = sorted_cards[low_idx].number;
+    int mid_kicker = sorted_cards[mid_idx].number;
+    int high_kicker = sorted_cards[high_idx].number;
+
+    if (low_kicker == 1) {
+        low_kicker = mid_kicker;
+        mid_kicker = high_kicker;
+        high_kicker = 14;
+    }
+
+    numbers[0] = numbers[1] = main;
+    numbers[2] = high_kicker;
+    numbers[3] = mid_kicker;
+    numbers[4] = low_kicker;
+}
+
+void make_numbers_for_TwoPair(const Card *sorted_cards, int *numbers)
+{
+    int main = sorted_cards[3].number;
+    int sub = sorted_cards[1].number;
+
+    if (sub == 1) {
+        sub = main;
+        main = 14;
+    }
+
+    int kicker;
+
+    if (sorted_cards[0].number != sorted_cards[1].number) {
+        kicker = sorted_cards[0].number;
+    } else if (sorted_cards[2].number != sorted_cards[3].number) {
+        kicker = sorted_cards[2].number;
+    } else {
+        kicker = sorted_cards[4].number;
+    }
+
+    if (kicker == 1) {
+        kicker = 14;
+    }
+
+    numbers[0] = numbers[1] = main;
+    numbers[2] = numbers[3] = sub;
+    numbers[4] = kicker;
+}
+
+void make_numbers_for_ThreeOfAKind(const Card *sorted_cards, int *numbers)
+{
+    int main = sorted_cards[2].number;
+
+    if (main == 1) {
+        main = 14;
+    }
+
+    int low_kicker;
+
+    if (sorted_cards[0].number != sorted_cards[1].number) {
+        low_kicker = sorted_cards[0].number;
+    } else {
+        low_kicker = sorted_cards[3].number;
+    }
+
+    int high_kicker;
+
+    if (sorted_cards[3].number != sorted_cards[4].number) {
+        high_kicker = sorted_cards[4].number;
+    } else {
+        high_kicker = sorted_cards[1].number;
+    }
+
+    if (low_kicker == 1) {
+        low_kicker = high_kicker;
+        high_kicker = 14;
+    }
+
+    numbers[0] = numbers[1] = numbers[2] = main;
+    numbers[3] = high_kicker;
+    numbers[4] = low_kicker;
+}
+
+void make_numbers_for_Flush(const Card *sorted_cards, int *numbers)
+{
+    int i;
+    for (i = 0; i < NUM_OF_CARDS; i++) {
+        if (sorted_cards[i].number == 1) {
+            numbers[i] = 14;
+        } else {
+            break;
+        }
+    }
+
+    for (int j = NUM_OF_CARDS - 1; i < NUM_OF_CARDS; i++, j--) {
+        numbers[i] = sorted_cards[j].number;
+    }
+}
+
+void make_numbers_for_FullHouse(const Card *sorted_cards, int *numbers)
+{
+    int main = sorted_cards[2].number;
+
+    if (main == 1) {
+        main = 14;
+    }
+
+    int sub;
+
+    if (sorted_cards[0].number == sorted_cards[2].number) {
+        sub = sorted_cards[3].number;
+    } else {
+        sub = sorted_cards[0].number;
+    }
+
+    if (sub == 1) {
+        sub = 14;
+    }
+
+    numbers[0] = numbers[1] = numbers[2] = main;
+    numbers[3] = numbers[4] = sub;
+}
+
+void make_numbers_for_FourOfAKind(const Card *sorted_cards, int *numbers)
+{
+    int main = sorted_cards[1].number;
+
+    if (main == 1) {
+        main = 14;
+    }
+
+    int kicker;
+
+    if (sorted_cards[0].number == sorted_cards[1].number) {
+        kicker = sorted_cards[NUM_OF_CARDS - 1].number;
+    } else {
+        kicker = sorted_cards[0].number;
+    }
+
+    if (kicker == 1) {
+        kicker = 14;
+    }
+
+    for (int i = 0; i < NUM_OF_CARDS - 1; i++) {
+        numbers[i] = main;
+    }
+    numbers[NUM_OF_CARDS - 1] = kicker;
+}
+
+void make_numbers_for_RoyalFlush(int *numbers)
+{
+    for (int i = 0; i < NUM_OF_CARDS; i++) {
+        numbers[i] = 14 - i;
+    }
+}
+
 void make_numbers(const Card *sorted_cards, Hand hand, int *numbers)
 {
     switch (hand) {
         case HighCard:
-            if (sorted_cards[0].number == 1) {
-                numbers[0] = 14;
-                for (int i = 1; i < NUM_OF_CARDS; i++) {
-                    numbers[i] = sorted_cards[NUM_OF_CARDS - i].number;
-                }
-            } else {
-                for (int i = 0; i < NUM_OF_CARDS; i++) {
-                    numbers[i] = sorted_cards[NUM_OF_CARDS - 1 - i].number;
-                }
-            }
+        case Straight:
+        case StraightFlush:
+            make_numbers_for_HighCard_Straight_StraightFlush(sorted_cards, numbers);
             break;
 
         case OnePair:
-            if (sorted_cards[0].number == sorted_cards[1].number) {
-                if (sorted_cards[0].number == 1) {
-                    numbers[0] = numbers[1] = 14;
-                } else {
-                    numbers[0] = numbers[1] = sorted_cards[0].number;
-                }
-                for (int i = 2; i < NUM_OF_CARDS; i++) {
-                    numbers[i] = sorted_cards[NUM_OF_CARDS + 1 - i].number;
-                }
-            } else if (sorted_cards[1].number == sorted_cards[2].number) {
-                numbers[0] = numbers[1] = sorted_cards[1].number;
-                if (sorted_cards[0].number == 1) {
-                    numbers[2] = 14;
-                    numbers[3] = sorted_cards[4].number;
-                    numbers[4] = sorted_cards[3].number;
-                } else {
-                    numbers[2] = sorted_cards[4].number;
-                    numbers[3] = sorted_cards[3].number;
-                    numbers[4] = sorted_cards[0].number;
-                }
-            } else if (sorted_cards[2].number == sorted_cards[3].number) {
-                numbers[0] = numbers[1] = sorted_cards[2].number;
-                if (sorted_cards[0].number == 1) {
-                    numbers[2] = 14;
-                    numbers[3] = sorted_cards[4].number;
-                    numbers[4] = sorted_cards[1].number;
-                } else {
-                    numbers[2] = sorted_cards[4].number;
-                    numbers[3] = sorted_cards[1].number;
-                    numbers[4] = sorted_cards[0].number;
-                }
-            } else {
-                numbers[0] = numbers[1] = sorted_cards[3].number;
-                if (sorted_cards[0].number == 1) {
-                    numbers[2] = 14;
-                    numbers[3] = sorted_cards[2].number;
-                    numbers[4] = sorted_cards[1].number;
-                } else {
-                    numbers[2] = sorted_cards[2].number;
-                    numbers[3] = sorted_cards[1].number;
-                    numbers[4] = sorted_cards[0].number;
-                }
-            }
+            make_numbers_for_OnePair(sorted_cards, numbers);
             break;
         
         case TwoPair:
-            if (sorted_cards[0].number == sorted_cards[1].number) {
-                if (sorted_cards[0].number == 1) {
-                    numbers[0] = numbers[1] = 14;
-                    numbers[2] = numbers[3] = sorted_cards[3].number;
-                } else {
-                    numbers[0] = numbers[1] = sorted_cards[3].number;
-                    numbers[2] = numbers[3] = sorted_cards[0].number;
-                }
-                if (sorted_cards[2].number == sorted_cards[3].number) {
-                    numbers[4] = sorted_cards[4].number;
-                } else {
-                    numbers[4] = sorted_cards[2].number;
-                }
-            } else {
-                numbers[0] = numbers[1] = sorted_cards[3].number;
-                numbers[2] = numbers[3] = sorted_cards[1].number;
-                if (sorted_cards[0].number == 1) {
-                    numbers[4] = 14;
-                } else {
-                    numbers[4] = sorted_cards[0].number;
-                }
-            }
+            make_numbers_for_TwoPair(sorted_cards, numbers);
             break;
         
-        case ThreeOfAKind: {
-            int three = sorted_cards[2].number;
-            if (three == 1) {
-                numbers[0] = numbers[1] = numbers[2] = 14;
-            } else {
-                numbers[0] = numbers[1] = numbers[2] = three;
-            }
-
-            if (three == sorted_cards[0].number) {
-                numbers[3] = sorted_cards[4].number;
-                numbers[4] = sorted_cards[3].number;
-            } else if (three == sorted_cards[1].number) {
-                if (sorted_cards[0].number == 1) {
-                    numbers[3] = 14;
-                    numbers[4] = sorted_cards[4].number;
-                } else {
-                    numbers[3] = sorted_cards[4].number;
-                    numbers[4] = sorted_cards[0].number;
-                }
-            } else {
-                if (sorted_cards[0].number == 1) {
-                    numbers[3] = 14;
-                    numbers[4] = sorted_cards[1].number;
-                } else {
-                    numbers[3] = sorted_cards[1].number;
-                    numbers[4] = sorted_cards[0].number;
-                }
-            }
-        }
+        case ThreeOfAKind:
+            make_numbers_for_ThreeOfAKind(sorted_cards, numbers);
             break;
         
-        case Straight:
-            if (sorted_cards[0].number == 1) {
-                numbers[0] = 14;
-                for (int i = 1; i < NUM_OF_CARDS; i++) {
-                    numbers[i] = sorted_cards[NUM_OF_CARDS - i].number;
-                }
-            } else {
-                for (int i = 0; i < NUM_OF_CARDS; i++) {
-                    numbers[i] = sorted_cards[NUM_OF_CARDS - 1 - i].number;
-                }
-            }
-            break;
-        
-        case Flush: {
-            int i;
-            for (i = 0; i < NUM_OF_CARDS; i++) {
-                if (sorted_cards[i].number == 1) {
-                    numbers[i] = 14;
-                } else {
-                    break;
-                }
-            }
-
-            for (int j = NUM_OF_CARDS - 1; i < NUM_OF_CARDS; i++, j--) {
-                numbers[i] = sorted_cards[j].number;
-            }
-        }
+        case Flush:
+            make_numbers_for_Flush(sorted_cards, numbers);
             break;
         
         case FullHouse:
-            for (int i = 0; i < NUM_OF_CARDS; i++) {
-                numbers[i] = sorted_cards[NUM_OF_CARDS - 1 - i].number;
-            }
+            make_numbers_for_FullHouse(sorted_cards, numbers);
             break;
         
         case FourOfAKind:
-            if (sorted_cards[0].number == sorted_cards[1].number) {
-                for (int i = 0; i < NUM_OF_CARDS; i++) {
-                    if (sorted_cards[i].number == 1) {
-                        numbers[i] = 14;
-                    } else {
-                        numbers[i] = sorted_cards[i].number;
-                    }
-                }
-            } else {
-                for (int i = 0; i < NUM_OF_CARDS - 1; i++) {
-                    numbers[i] = sorted_cards[i + 1].number;
-                }
-                if (sorted_cards[0].number == 1) {
-                    numbers[NUM_OF_CARDS - 1] = 14;
-                } else {
-                    numbers[NUM_OF_CARDS - 1] = sorted_cards[0].number;
-                }
-            }
-            break;
-        
-        case StraightFlush:
-            if (sorted_cards[0].number == 1) {
-                numbers[0] = 14;
-                for (int i = 1; i < NUM_OF_CARDS; i++) {
-                    numbers[i] = sorted_cards[NUM_OF_CARDS - i].number;
-                }
-            } else {
-                for (int i = 0; i < NUM_OF_CARDS; i++) {
-                    numbers[i] = sorted_cards[NUM_OF_CARDS - 1 - i].number;
-                }
-            }
+            make_numbers_for_FourOfAKind(sorted_cards, numbers);
             break;
         
         case RoyalFlush:
-            for (int i = 0; i < NUM_OF_CARDS; i++) {
-                numbers[i] = 14 - i;
-            }
+            make_numbers_for_RoyalFlush(numbers);
             break;
     }
 }

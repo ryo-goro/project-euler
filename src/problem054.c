@@ -122,10 +122,12 @@ int has_Straight(const Card *sorted_cards)
         }
     }
 
+    // From [1, 2, 3, 4, 5] to [9, 10, 11, 12, 13]
     if (sorted_cards[1].number - sorted_cards[0].number == 1) {
         return 1;
     }
 
+    // [1, 10, 11, 12, 13]
     if (sorted_cards[0].number == 1 && sorted_cards[1].number == 10) {
         return 1;
     }
@@ -169,36 +171,18 @@ int is_FullHouse(const Card *sorted_cards)
     return 0;
 }
 
-int is_ThreeOfAKind(const Card *sorted_cards)
+int has_ThreeOfAKind(const Card *sorted_cards)
 {
-    if (sorted_cards[0].number == sorted_cards[2].number) {
-        if (sorted_cards[2].number == sorted_cards[3].number) {
-            return 0;
+    for (int i = 0; i < NUM_OF_CARDS - 2; i++) {
+        if (sorted_cards[i].number == sorted_cards[i + 2].number) {
+            return 1;
         }
-        if (sorted_cards[3].number == sorted_cards[4].number) {
-            return 0;
-        }
-        return 1;
-    }
-
-    if (sorted_cards[1].number == sorted_cards[3].number) {
-        if (sorted_cards[3].number == sorted_cards[4].number) {
-            return 0;
-        }
-        return 1;
-    }
-
-    if (sorted_cards[2].number == sorted_cards[4].number) {
-        if (sorted_cards[0].number == sorted_cards[1].number) {
-            return 0;
-        }
-        return 1;
     }
 
     return 0;
 }
 
-int is_TwoPair(const Card *sorted_cards)
+int has_TwoPair(const Card *sorted_cards)
 {
     if (sorted_cards[0].number == sorted_cards[1].number) {
         if (sorted_cards[1].number == sorted_cards[2].number) {
@@ -221,15 +205,10 @@ int is_TwoPair(const Card *sorted_cards)
     return 0;
 }
 
-int is_OnePair(const Card *sorted_cards)
+int has_OnePair(const Card *sorted_cards)
 {
     for (int i = 0; i < NUM_OF_CARDS - 1; i++) {
         if (sorted_cards[i].number == sorted_cards[i + 1].number) {
-            for (int j = i + 1; j < NUM_OF_CARDS - 1; j++) {
-                if (sorted_cards[j].number == sorted_cards[j + 1].number) {
-                    return 0;
-                }
-            }
             return 1;
         }
     }
@@ -263,15 +242,15 @@ Hand get_hand(const Card *sorted_cards)
         return Straight;
     }
 
-    if (is_ThreeOfAKind(sorted_cards)) {
+    if (has_ThreeOfAKind(sorted_cards)) {
         return ThreeOfAKind;
     }
 
-    if (is_TwoPair(sorted_cards)) {
+    if (has_TwoPair(sorted_cards)) {
         return TwoPair;
     }
 
-    if (is_OnePair(sorted_cards)) {
+    if (has_OnePair(sorted_cards)) {
         return OnePair;
     }
 
@@ -518,23 +497,23 @@ int main(void)
         return 1;
     }
 
-    Card p1[NUM_OF_CARDS];
-    Card p2[NUM_OF_CARDS];
+    Card cards1[NUM_OF_CARDS];
+    Card cards2[NUM_OF_CARDS];
 
     int count = 0;
 
     for (int game = 0; game < NUM_OF_GAMES; game++) {
         for (int i = 0; i < NUM_OF_CARDS; i++) {
-            read_card(fp, &p1[i]);
+            read_card(fp, &cards1[i]);
         }
         for (int i = 0; i < NUM_OF_CARDS; i++) {
-            read_card(fp, &p2[i]);
+            read_card(fp, &cards2[i]);
         }
 
-        insertion_sort(p1, NUM_OF_CARDS);
-        insertion_sort(p2, NUM_OF_CARDS);
+        insertion_sort(cards1, NUM_OF_CARDS);
+        insertion_sort(cards2, NUM_OF_CARDS);
 
-        if (compare(p1, p2) > 0) {
+        if (compare(cards1, cards2) > 0) {
             count++;
         }
     }

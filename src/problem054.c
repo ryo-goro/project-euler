@@ -1,4 +1,5 @@
 // Poker Hands
+// 376
 
 #include <stdio.h>
 
@@ -7,25 +8,10 @@
 
 typedef enum { Spade, Club, Diamond, Heart } Suit;
 
-// const char *suit_str[] = {
-//     "S",
-//     "C",
-//     "D",
-//     "H",
-// };
-
-// const char *hand_str[] = {
-//     "High Card",
-//     "One Pair",
-//     "Two Pair",
-//     "Three Of A Kind",
-//     "Straight",
-//     "Flush",
-//     "Full House",
-//     "Four Of A Kind",
-//     "Straight Flush",
-//     "Royal Flush",
-// };
+typedef struct {
+    int number;
+    Suit suit;
+} Card;
 
 typedef enum {
     HighCard,
@@ -39,11 +25,6 @@ typedef enum {
     StraightFlush,
     RoyalFlush,
 } Hand;
-
-typedef struct {
-    int number;
-    Suit suit;
-} Card;
 
 int read_card(FILE *fp, Card *card)
 {
@@ -556,20 +537,6 @@ int main(void)
         if (compare(p1, p2) > 0) {
             count++;
         }
-
-        // printf("Game %d\n", game + 1);
-        // printf("Player1: ");
-        // for (int i = 0; i < NUM_OF_CARDS; i++) {
-        //     printf("%d(%s) ", p1[i].number, suit_str[p1[i].suit]);
-        // }
-        // printf(" -> %s\n", hand_str[get_hand(p1)]);
-
-        // printf("Player2: ");
-        // for (int i = 0; i < NUM_OF_CARDS; i++) {
-        //     printf("%d(%s) ", p2[i].number, suit_str[p2[i].suit]);
-        // }
-        // printf(" -> %s\n", hand_str[get_hand(p2)]);
-        // putchar('\n');
     }
 
     printf("%d\n", count);

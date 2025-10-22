@@ -473,13 +473,13 @@ void make_numbers(const Card *sorted_cards, Hand hand, int *numbers)
     }
 }
 
-int compare_array(const int *a, const int *b, int n)
+int compare_arr(const int *arr1, const int *arr2, int n)
 {
     for (int i = 0; i < n; i++) {
-        if (a[i] > b[i]) {
+        if (arr1[i] > arr2[i]) {
             return 1;
         }
-        if (a[i] < b[i]) {
+        if (arr1[i] < arr2[i]) {
             return -1;
         }
     }
@@ -507,7 +507,7 @@ int compare(const Card *sorted_cards1, const Card *sorted_cards2)
     make_numbers(sorted_cards1, hand, numbers1);
     make_numbers(sorted_cards2, hand, numbers2);
     
-    return compare_array(numbers1, numbers2, NUM_OF_CARDS);
+    return compare_arr(numbers1, numbers2, NUM_OF_CARDS);
 }
 
 int main(void)

@@ -43,9 +43,11 @@ void read_chars(FILE *fp, char *dst)
 
 int main(void)
 {
-    FILE *fp = fopen("../text/problem059.txt", "r");
+    const char *text_path = "../text/problem059.txt";
+    FILE *fp = fopen(text_path, "r");
+
     if (fp == NULL) {
-        fprintf(stderr, "Cannot open ../text/problem059.txt\n");
+        fprintf(stderr, "Cannot open %s\n", text_path);
         return 1;
     }
 

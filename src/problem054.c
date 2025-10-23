@@ -534,9 +534,11 @@ int compare(const Card *sorted_cards1, const Card *sorted_cards2)
 
 int main(void)
 {
-    FILE *fp = fopen("../text/problem054.txt", "r");
+    const char *text_path = "../text/problem054.txt";
+    FILE *fp = fopen(text_path, "r");
+
     if (fp == NULL) {
-        fprintf(stderr, "Cannot open ../text/problem054.txt\n");
+        fprintf(stderr, "Cannot open %s\n", text_path);
         return 1;
     }
 

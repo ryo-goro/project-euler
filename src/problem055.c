@@ -23,26 +23,33 @@ void copy_arr(int *dst, const int *src, int src_len)
     }
 }
 
-int add_and_carry(int *dst, const int *src, int len)
+void add_arr(int *dst, const int *src, int n)
 {
-    for (int i = 0; i < len; i++) {
+    for (int i = 0; i < n; i++) {
         dst[i] += src[i];
+    }
+}
+
+int carry_digits(int *digits, int len)
+{
+    if (len <= 0) {
+        return 0;
     }
 
     for (int i = 0; i < len - 1; i++) {
-        if (dst[i] >= 10) {
-            dst[i] -= 10;
-            dst[i + 1]++;
-        }
+        digits[i + 1] += digits[i] / 10;
+        digits[i] %= 10;
     }
 
-    if (dst[len - 1] < 10) {
-        return len;
+    int head = len - 1;
+
+    while (digits[head] >= 10) {
+        digits[head + 1] = digits[head] / 10;
+        digits[head] %= 10;
+        head++;
     }
 
-    dst[len - 1] -= 10;
-    dst[len] = 1;
-    return len + 1;
+    return head + 1;
 }
 
 // Example: target = 123 -> digits = {3, 2, 1} and the function returns 3
@@ -70,8 +77,8 @@ int is_palindromic(const int *arr, int n)
 
 int main(void)
 {
-    int digits[MAX_NUM_OF_DIGITS] = {0};
-    int digits_rev[MAX_NUM_OF_DIGITS] = {0};
+    int digits[MAX_NUM_OF_DIGITS];
+    int digits_rev[MAX_NUM_OF_DIGITS];
 
     int count = 0;
 
@@ -82,7 +89,8 @@ int main(void)
         for (rep = 1; rep < ITERATION_LIMIT; rep++) {
             copy_arr(digits_rev, digits, num_of_digits);
             reverse_arr(digits_rev, num_of_digits);
-            num_of_digits = add_and_carry(digits, digits_rev, num_of_digits);
+            add_arr(digits, digits_rev, num_of_digits);
+            num_of_digits = carry_digits(digits, num_of_digits);
             
             if (is_palindromic(digits, num_of_digits)) {
                 break;

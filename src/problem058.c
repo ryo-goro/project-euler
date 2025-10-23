@@ -1,4 +1,5 @@
 // Spiral Primes
+// 26241
 
 // 37 36 35 34 33 32 31
 // 38 17 16 15 14 13 30
@@ -27,11 +28,11 @@ int is_prime(long long target)
         return 1;
     }
 
-    if (target % 2LL == 0LL) {
+    if (target % 2 == 0LL) {
         return 0;
     }
 
-    for (long long d = 3LL; d * d <= target; d += 2LL) {
+    for (long long d = 3; d * d <= target; d += 2) {
         if (target % d == 0LL) {
             return 0;
         }

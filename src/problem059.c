@@ -9,13 +9,13 @@
 
 #define PASSWORD_LEN 3
 
-int count_comma(FILE *fp)
+int count_char(FILE *fp, int target_ch)
 {
-    int ch;
     int count = 0;
+    int ch;
 
     while ((ch = fgetc(fp)) != EOF) {
-        if (ch == ',') {
+        if (ch == target_ch) {
             count++;
         }
     }
@@ -23,22 +23,23 @@ int count_comma(FILE *fp)
     return count;
 }
 
+// Not versatile
 void read_chars(FILE *fp, char *dst)
 {
     int idx = 0;
     int ch;
-    int c = 0;
+    int ascii_code = 0;
 
     while ((ch = fgetc(fp)) != EOF) {
         if (ch == ',') {
-            dst[idx++] = (char)c;
-            c = 0;
+            dst[idx++] = (char)ascii_code;
+            ascii_code = 0;
         } else {
-            c = c * 10 + ch - '0';
+            ascii_code = ascii_code * 10 + ch - '0';
         }
     }
 
-    dst[idx] = c;
+    dst[idx] = ascii_code;
 }
 
 int main(void)
@@ -51,27 +52,27 @@ int main(void)
         return 1;
     }
 
-    int n = count_comma(fp) + 1;
-    char *encrypted_text = malloc(n);
+    int num_of_chars = count_char(fp, ',') + 1;
+    char *encrypted_text = malloc(num_of_chars);
 
     fseek(fp, 0, SEEK_SET);
     read_chars(fp, encrypted_text);
     fclose(fp);
 
-    char *decrypted_text = malloc(n);
+    char *decrypted_text = malloc(num_of_chars);
 
     char password[PASSWORD_LEN] = "exp";
 
     for (int i = 0; i < PASSWORD_LEN; i++) {
         char key = password[i];
 
-        for (int j = i; j < n; j += PASSWORD_LEN) {
+        for (int j = i; j < num_of_chars; j += PASSWORD_LEN) {
             decrypted_text[j] = encrypted_text[j] ^ key;
         }
     }
 
     long sum = 0;
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < num_of_chars; i++) {
         sum += decrypted_text[i];
     }
 

@@ -1,21 +1,22 @@
 // Lychrel Numbers
+// 249
 
 #include <stdio.h>
 
 #define LIMIT 10000
-#define MAX_ITERATIONS 50
+#define ITERATION_LIMIT 50
 #define MAX_NUM_OF_DIGITS 256
 
-#define swap(type, x, y)    do { type t = x; x = y; y = t; } while (0)
-
-void reverse(int *a, int n)
+void reverse_arr(int *arr, int n)
 {
     for (int i = 0, h = n / 2; i < h; i++) {
-        swap(int, a[i], a[n - 1 - i]);
+        int tmp = arr[i];
+        arr[i] = arr[n - 1 - i];
+        arr[n - 1 - i] = tmp;
     }
 }
 
-void array_copy(int *dst, const int *src, int src_len)
+void copy_arr(int *dst, const int *src, int src_len)
 {
     for (int i = 0; i < src_len; i++) {
         dst[i] = src[i];
@@ -44,22 +45,23 @@ int add_and_carry(int *dst, const int *src, int len)
     return len + 1;
 }
 
-int to_array(int *digits, int target)
+// Example: target = 123 -> digits = {3, 2, 1} and the function returns 3
+int to_digits_rev(int *digits, long target)
 {
-    int num_of_digits = 0;
+    int len = 0;
 
-    do {
-        digits[num_of_digits++] = target % 10;
+    while (target > 0L) {
+        digits[len++] = (int)(target % 10);
         target /= 10;
-    } while (target > 0);
+    }
 
-    return num_of_digits;
+    return len;
 }
 
-int is_palindromic(const int *digits, int n)
+int is_palindromic(const int *arr, int n)
 {
     for (int i = 0, h = n / 2; i < h; i++) {
-        if (digits[i] != digits[n - 1 - i]) {
+        if (arr[i] != arr[n - 1 - i]) {
             return 0;
         }
     }
@@ -74,12 +76,12 @@ int main(void)
     int count = 0;
 
     for (int target = 1; target < LIMIT; target++) {
-        int num_of_digits = to_array(digits, target);
+        int num_of_digits = to_digits_rev(digits, target);
         
         int rep;
-        for (rep = 1; rep < MAX_ITERATIONS; rep++) {
-            array_copy(digits_rev, digits, num_of_digits);
-            reverse(digits_rev, num_of_digits);
+        for (rep = 1; rep < ITERATION_LIMIT; rep++) {
+            copy_arr(digits_rev, digits, num_of_digits);
+            reverse_arr(digits_rev, num_of_digits);
             num_of_digits = add_and_carry(digits, digits_rev, num_of_digits);
             
             if (is_palindromic(digits, num_of_digits)) {
@@ -87,7 +89,7 @@ int main(void)
             }
         }
 
-        if (rep == MAX_ITERATIONS) {
+        if (rep == ITERATION_LIMIT) {
             count++;
         }
     }

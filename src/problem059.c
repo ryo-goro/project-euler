@@ -61,7 +61,7 @@ int main(void)
 
     char *decrypted_text = malloc(num_of_chars);
 
-    char password[PASSWORD_LEN] = "exp";
+    const char password[PASSWORD_LEN] = "exp";
 
     for (int i = 0; i < PASSWORD_LEN; i++) {
         char key = password[i];

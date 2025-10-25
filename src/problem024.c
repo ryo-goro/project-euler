@@ -9,7 +9,8 @@
 
 // Fill `dst` with a permutation of 0, 1, ..., `perm_len` - 1 whose order is specified by `order`
 // Example: fill_permutation(dst, 3, 0) -> dst = {0, 1, 2}
-// Example: fill_permutation(dst, 3, 5) -> dst = {2, 1, 0}
+// Example: fill_permutation(dst, 3, 1) -> dst = {0, 2, 1}
+// Example: fill_permutation(dst, 3, 2) -> dst = {1, 0, 2}
 // Example: fill_permutation(dst, 3, 6) -> dst = {0, 1, 2}
 // `order` should be >= 0
 // If `order` >= `perm_len`!, `order` % `perm_len`! is used as `order`

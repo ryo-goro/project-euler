@@ -10,6 +10,7 @@
 #define INITIAL_ARRAY_CAPACITY 16
 #define PRIME_LIMIT 10000
 #define STACK_CAPACITY 5
+#define INFINITY 1000000L
 
 typedef struct {
     int *array;
@@ -176,9 +177,16 @@ int main(void)
     char prime_sieve[SIEVE_SIZE];   // The sieve of Eratosthenes
     make_sieve(prime_sieve, SIEVE_SIZE);
 
+    // `primes` is an IntArrayList whose `array` consists of prime numbers that are < PRIME_LIMIT
+    // For the array to contain the prime numbers that solves the problem, the following must hold true:
+    // - The array does not contain 2 and 5 because every prime number the number of digits of which is > 1
+    //   does not end with 2 or 5.
+    // - The array does not simultaneously contain prime numbers
+    //   whose remainder when divided by 3 is 1 and prime numbers whose remainder is 2
+    //   because a number obtained by concatenating those numbers is divisible by 3.
     IntArrayList primes;
-
     IAL_initialize(&primes, INITIAL_PRIMES_CAPACITY);
+
     IAL_add(&primes, 3);
 
     // 6k + 1
@@ -213,9 +221,13 @@ int main(void)
         }
     }
 
-    for (int i = 0; i < num_of_primes - 1; i++) {
-        // Check if a set whose minimun value is `primes.array[i]` is an answer
+    long res = INFINITY;
 
+    for (int i = 0; i < num_of_primes - 1; i++) {
+        // Check if a set whose minimum value is `primes.array[i]` is an answer
+
+        // For any `x` and `y` such that `0 <= x < y < stk_size`,
+        // the concatenations of `primes.array[idx_stk[x]]` and `primes.array[idx_stk[y]]` are prime
         int idx_stk[STACK_CAPACITY];
         int itr_stk[STACK_CAPACITY];
 
@@ -240,7 +252,6 @@ int main(void)
                     }
                 }
 
-                // Found a new candidate
                 if (next_ok) {
                     idx_stk[stk_size] = next_idx;
                     itr_stk[stk_size - 1] = itr + 1;
@@ -248,11 +259,14 @@ int main(void)
                     stk_size++;
 
                     if (stk_size == STACK_CAPACITY) {
-                        printf("Found:");
-                        for (int j = 0; j < stk_size; j++) {
-                            printf(" %d", IAL_get(&primes, idx_stk[j]));
+                        long sum = 0;
+                        for (int j = 0; j < STACK_CAPACITY; j++) {
+                            sum += IAL_get(&primes, idx_stk[j]);
                         }
-                        putchar('\n');
+                        if (sum < res) {
+                            res = sum;
+                        }
+
                         stk_size--;
                     }
 
@@ -264,6 +278,12 @@ int main(void)
                 stk_size--;
             }
         }
+    }
+
+    if (res < INFINITY) {
+        printf("%ld\n", res);
+    } else {
+        puts("Answer not found");
     }
 
     // Free memory

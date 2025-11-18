@@ -150,9 +150,17 @@ int is_prime(long long target)
 }
 
 // `target` should be >= 0
-int is_prime_with_sieve(long long target, const char *sieve, long sieve_len)
+int is_prime_with_sieve(long long target)
 {
-    if (target < sieve_len) {
+    static char sieve[SIEVE_SIZE];
+    static char sieve_is_initialized = 0;
+
+    if (!sieve_is_initialized) {
+        make_sieve(sieve, SIEVE_SIZE);
+        sieve_is_initialized = 1;
+    }
+
+    if (target < SIEVE_SIZE) {
         return sieve[target];
     }
 
@@ -174,9 +182,6 @@ long long concat(long a, long b)
 
 int main(void)
 {
-    char prime_sieve[SIEVE_SIZE];   // The sieve of Eratosthenes
-    make_sieve(prime_sieve, SIEVE_SIZE);
-
     // `primes` is an IntArrayList whose `array` consists of prime numbers that are < PRIME_LIMIT
     // For the array to contain the prime numbers that solves the problem, the following must hold true:
     // - The array does not contain 2 and 5 because every prime number the number of digits of which is > 1
@@ -192,7 +197,7 @@ int main(void)
     // 6k + 1
     // No candidate was found for 6k + 5
     for (int p = 7; p < PRIME_LIMIT; p += 6) {
-        if (prime_sieve[p]) {
+        if (is_prime_with_sieve(p)) {
             IAL_add(&primes, p);
         }
     }
@@ -208,14 +213,12 @@ int main(void)
         IntArrayList *idxs = &concat_idxs[i];
         IAL_initialize(idxs, INITIAL_ARRAY_CAPACITY);
 
-        int prime_i = IAL_get(&primes, i);
+        int p_i = IAL_get(&primes, i);
 
         for (int j = i + 1; j < num_of_primes; j++) {
-            int prime_j = IAL_get(&primes, j);
+            int p_j = IAL_get(&primes, j);
 
-            if (is_prime_with_sieve(concat(prime_i, prime_j), prime_sieve, SIEVE_SIZE)
-                && is_prime_with_sieve(concat(prime_j, prime_i), prime_sieve, SIEVE_SIZE)
-            ) {
+            if (is_prime_with_sieve(concat(p_i, p_j)) && is_prime_with_sieve(concat(p_j, p_i))) {
                 IAL_add(idxs, j);
             }
         }
